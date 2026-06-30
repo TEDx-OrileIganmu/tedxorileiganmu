@@ -360,15 +360,16 @@ function InlineSelect({
 /* ─── Overview ─────────────────────────────────────────────────────────── */
 
 type OverviewStats = {
-  tickets: number;
   paid: number;
+  pending: number;
+  failed: number;
   volunteers: number;
   partners: number;
   donations: number;
   raised: number;
 };
 
-function TrendBar({ value, max = SEAT_CAPACITY }: { value: number; max?: number }) {
+function TrendBar({ value, max = SEAT_CAPACITY, label }: { value: number; max?: number; label?: string }) {
   const pct = Math.min((value / max) * 100, 100);
   return (
     <div className="mt-5">
@@ -381,7 +382,7 @@ function TrendBar({ value, max = SEAT_CAPACITY }: { value: number; max?: number 
         />
       </div>
       <p className="text-[9px] text-muted-foreground mt-1.5 uppercase tracking-[0.2em]">
-        {pct.toFixed(0)}% of {max} capacity
+        {label ?? `${pct.toFixed(0)}% of ${max} seats`}
       </p>
     </div>
   );
@@ -392,58 +393,41 @@ function Overview() {
 
   useEffect(() => {
     (async () => {
-      const [t, tp, v, p, d] = await Promise.all([
-        supabase.from("ticket_orders").select("id", { count: "exact", head: true }),
-        supabase.from("ticket_orders").select("amount_naira").eq("payment_status", "paid"),
+      const [ticketData, v, p, donationData] = await Promise.all([
+        // Only count the tiers we actually sell (regular + vip)
+        (supabase as any)
+          .from("ticket_orders")
+          .select("payment_status, amount_naira, tier")
+          .in("tier", ["regular", "vip"]),
         supabase.from("volunteer_applications").select("id", { count: "exact", head: true }),
         supabase.from("partner_inquiries").select("id", { count: "exact", head: true }),
         supabase.from("donations").select("amount_naira").eq("payment_status", "paid"),
       ]);
-      const ticketRevenue = (tp.data ?? []).reduce((s, r) => s + (r.amount_naira ?? 0), 0);
-      const donationRevenue = (d.data ?? []).reduce((s, r) => s + (r.amount_naira ?? 0), 0);
+
+      const tickets: { payment_status: string; amount_naira: number }[] = ticketData.data ?? [];
+      const paidTickets = tickets.filter((t) => t.payment_status === "paid");
+      const pendingTickets = tickets.filter((t) => t.payment_status === "pending");
+      const failedTickets = tickets.filter(
+        (t) => t.payment_status === "failed" || t.payment_status === "refunded",
+      );
+
+      const ticketRevenue = paidTickets.reduce((s, r) => s + (r.amount_naira ?? 0), 0);
+      const donationRevenue = (donationData.data ?? []).reduce(
+        (s: number, r: { amount_naira: number }) => s + (r.amount_naira ?? 0),
+        0,
+      );
+
       setStats({
-        tickets: t.count ?? 0,
-        paid: tp.data?.length ?? 0,
+        paid: paidTickets.length,
+        pending: pendingTickets.length,
+        failed: failedTickets.length,
         volunteers: v.count ?? 0,
         partners: p.count ?? 0,
-        donations: d.data?.length ?? 0,
+        donations: donationData.data?.length ?? 0,
         raised: ticketRevenue + donationRevenue,
       });
     })();
   }, []);
-
-  const cards = stats
-    ? [
-        {
-          label: "Ticket orders",
-          value: stats.tickets,
-          sub: `${stats.paid} paid · ${stats.tickets - stats.paid} pending`,
-          trend: stats.paid,
-          trendLabel: true,
-        },
-        {
-          label: "Volunteers",
-          value: stats.volunteers,
-          sub: "Applications received",
-          trend: stats.volunteers,
-          trendLabel: true,
-        },
-        {
-          label: "Partner inquiries",
-          value: stats.partners,
-          sub: "Sponsors · media · community",
-          trend: stats.partners,
-          trendLabel: true,
-        },
-        {
-          label: "Revenue raised",
-          value: `₦${(stats.raised / 1000).toFixed(0)}k`,
-          sub: `${stats.donations} donation${stats.donations !== 1 ? "s" : ""} · tickets + gifts`,
-          trend: Math.round((stats.raised / 5_000_000) * SEAT_CAPACITY),
-          trendLabel: false,
-        },
-      ]
-    : [];
 
   return (
     <div>
@@ -451,46 +435,93 @@ function Overview() {
       {!stats ? (
         <Loader />
       ) : (
-        <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-          {cards.map((c, i) => (
-            <motion.div
-              key={c.label}
-              initial={{ opacity: 0, y: 12 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={{ delay: i * 0.07, duration: 0.35 }}
-              className="relative bg-paper border border-border p-7 group hover:border-ink/30 transition-colors"
-            >
-              <div className="absolute top-0 left-0 h-[2px] w-10 bg-red" />
-              <p className="text-[10px] uppercase tracking-[0.3em] text-muted-foreground">
-                {c.label}
-              </p>
-              <p className="mt-4 font-display font-medium text-[3.25rem] leading-none tracking-[-0.03em]">
-                {c.value}
-              </p>
-              <p className="mt-2 text-[11px] text-muted-foreground">{c.sub}</p>
-              <TrendBar value={c.trend} />
-            </motion.div>
-          ))}
-        </div>
-      )}
+        <>
+          {/* Primary confirmed-attendees banner */}
+          <motion.div
+            initial={{ opacity: 0, y: 8 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.35 }}
+            className="relative bg-ink text-white p-7 mb-4"
+          >
+            <div className="absolute top-0 left-0 h-[3px] w-14 bg-red" />
+            <p className="text-[10px] uppercase tracking-[0.3em] text-white/40">
+              Confirmed attendees
+            </p>
+            <p className="mt-3 font-display font-medium text-[4rem] leading-none tracking-[-0.03em]">
+              {stats.paid}
+            </p>
+            <p className="mt-2 text-[11px] text-white/50">
+              Paid &amp; verified · ₦{stats.raised.toLocaleString()} received
+            </p>
+            <TrendBar value={stats.paid} label={`${stats.paid} of ${SEAT_CAPACITY} seats filled`} />
+          </motion.div>
 
-      {/* Quick activity note */}
-      {stats && (
-        <motion.div
-          initial={{ opacity: 0 }}
-          animate={{ opacity: 1 }}
-          transition={{ delay: 0.45 }}
-          className="mt-6 border border-border bg-muted px-6 py-4 flex items-center gap-4"
-        >
-          <span className="h-px w-6 bg-red shrink-0" />
-          <p className="text-[11px] text-muted-foreground">
-            <span className="font-medium text-ink">{stats.paid}</span> confirmed attendees ·{" "}
-            <span className="font-medium text-ink">
-              ₦{stats.raised.toLocaleString()}
-            </span>{" "}
-            total revenue · data refreshes on page load
-          </p>
-        </motion.div>
+          <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+            {[
+              {
+                label: "Pending orders",
+                value: stats.pending,
+                sub: `Paystack opened but not completed`,
+                trend: stats.pending,
+                max: SEAT_CAPACITY,
+              },
+              {
+                label: "Volunteers",
+                value: stats.volunteers,
+                sub: "Applications received",
+                trend: stats.volunteers,
+                max: 50,
+              },
+              {
+                label: "Partner inquiries",
+                value: stats.partners,
+                sub: "Sponsors · media · community",
+                trend: stats.partners,
+                max: 20,
+              },
+              {
+                label: "Donations",
+                value: stats.donations,
+                sub: `₦${stats.donations > 0 ? (stats.raised - stats.paid * 3500).toLocaleString() : "0"} from gifts`,
+                trend: stats.donations,
+                max: 50,
+              },
+            ].map((c, i) => (
+              <motion.div
+                key={c.label}
+                initial={{ opacity: 0, y: 12 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ delay: 0.1 + i * 0.07, duration: 0.35 }}
+                className="relative bg-paper border border-border p-7 hover:border-ink/30 transition-colors"
+              >
+                <div className="absolute top-0 left-0 h-[2px] w-10 bg-red" />
+                <p className="text-[10px] uppercase tracking-[0.3em] text-muted-foreground">
+                  {c.label}
+                </p>
+                <p className="mt-4 font-display font-medium text-[3.25rem] leading-none tracking-[-0.03em]">
+                  {c.value}
+                </p>
+                <p className="mt-2 text-[11px] text-muted-foreground">{c.sub}</p>
+                <TrendBar value={c.trend} max={c.max} />
+              </motion.div>
+            ))}
+          </div>
+
+          <motion.div
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            transition={{ delay: 0.5 }}
+            className="mt-4 border border-border bg-muted px-6 py-4 flex items-center gap-4"
+          >
+            <span className="h-px w-6 bg-red shrink-0" />
+            <p className="text-[11px] text-muted-foreground">
+              <span className="font-medium text-ink">{stats.paid}</span> confirmed ·{" "}
+              <span className="font-medium text-ink">{stats.pending}</span> pending ·{" "}
+              <span className="font-medium text-ink">{stats.failed}</span> failed/refunded ·{" "}
+              data refreshes on page load
+            </p>
+          </motion.div>
+        </>
       )}
     </div>
   );
