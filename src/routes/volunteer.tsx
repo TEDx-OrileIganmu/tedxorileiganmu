@@ -267,7 +267,7 @@ function HeroSection() {
             Shape
           </motion.h1>
         </div>
-        <div className="overflow-hidden pb-[0.12em]">
+        <div className="overflow-hidden pb-[0.32em]">
           <motion.h1
             initial={{ y: "110%" }}
             animate={{ y: 0 }}

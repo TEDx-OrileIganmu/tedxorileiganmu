@@ -47,6 +47,56 @@ function AnimatedCounter({ end, label }: { end: number; label: string }) {
   );
 }
 
+/* ─── Countdown ─────────────────────────────────────────────────────────── */
+const EVENT_DATE = new Date("2027-03-06T08:30:00+01:00");
+
+function useCountdown() {
+  const calc = () => {
+    const diff = EVENT_DATE.getTime() - Date.now();
+    if (diff <= 0) return { days: 0, hours: 0, minutes: 0, seconds: 0 };
+    return {
+      days: Math.floor(diff / 86400000),
+      hours: Math.floor((diff % 86400000) / 3600000),
+      minutes: Math.floor((diff % 3600000) / 60000),
+      seconds: Math.floor((diff % 60000) / 1000),
+    };
+  };
+  const [time, setTime] = useState(calc);
+  useEffect(() => {
+    const id = setInterval(() => setTime(calc()), 1000);
+    return () => clearInterval(id);
+  }, []);
+  return time;
+}
+
+function Countdown() {
+  const { days, hours, minutes, seconds } = useCountdown();
+  return (
+    <div className="flex flex-col gap-5">
+      {/* Primary: days */}
+      <div>
+        <p className="font-display font-medium text-[clamp(4.5rem,10vw,7rem)] leading-none tracking-[-0.04em] tabular-nums">
+          {String(days).padStart(3, " ")}
+        </p>
+        <p className="text-[10px] uppercase tracking-[0.3em] text-muted-foreground mt-1">Days to go</p>
+      </div>
+      {/* Secondary: hours · mins · secs */}
+      <div className="grid grid-cols-3 gap-3 max-w-[220px]">
+        {[
+          { v: hours, l: "Hrs" },
+          { v: minutes, l: "Min" },
+          { v: seconds, l: "Sec" },
+        ].map(({ v, l }) => (
+          <div key={l} className="border border-border px-3 py-2.5 text-center">
+            <p className="font-display font-medium text-xl tracking-[-0.02em] tabular-nums">{String(v).padStart(2, "0")}</p>
+            <p className="text-[8px] uppercase tracking-[0.25em] text-muted-foreground mt-0.5">{l}</p>
+          </div>
+        ))}
+      </div>
+    </div>
+  );
+}
+
 /* ─── Scroll progress ───────────────────────────────────────────────────── */
 function ScrollProgress() {
   const { scrollYProgress } = useScroll();
@@ -147,15 +197,18 @@ function HomePage() {
                 Ideas that transcend place, perspective, and possibility.
               </p>
             </div>
-            <div className="flex flex-col sm:flex-row md:flex-col gap-3">
-              <Link to="/tickets" className="group relative inline-flex items-center justify-center bg-red text-white px-8 py-4 text-xs uppercase tracking-[0.25em] overflow-hidden">
-                <span className="absolute inset-0 bg-ink translate-y-full group-hover:translate-y-0 transition-transform duration-500 ease-[cubic-bezier(0.22,1,0.36,1)]" />
-                <span className="relative">Reserve a Seat →</span>
-              </Link>
-              <Link to="/volunteer" className="group relative inline-flex items-center justify-center border border-ink text-ink px-8 py-4 text-xs uppercase tracking-[0.25em] overflow-hidden">
-                <span className="absolute inset-0 bg-ink translate-y-full group-hover:translate-y-0 transition-transform duration-500 ease-[cubic-bezier(0.22,1,0.36,1)]" />
-                <span className="relative group-hover:text-white transition-colors">Volunteer · Partner</span>
-              </Link>
+            <div className="flex flex-col gap-8">
+              <Countdown />
+              <div className="flex flex-col gap-3">
+                <Link to="/tickets" className="group relative inline-flex items-center justify-center bg-red text-white px-8 py-4 text-xs uppercase tracking-[0.25em] overflow-hidden">
+                  <span className="absolute inset-0 bg-ink translate-y-full group-hover:translate-y-0 transition-transform duration-500 ease-[cubic-bezier(0.22,1,0.36,1)]" />
+                  <span className="relative">Reserve a Seat →</span>
+                </Link>
+                <Link to="/volunteer" className="group relative inline-flex items-center justify-center border border-ink text-ink px-8 py-4 text-xs uppercase tracking-[0.25em] overflow-hidden">
+                  <span className="absolute inset-0 bg-ink translate-y-full group-hover:translate-y-0 transition-transform duration-500 ease-[cubic-bezier(0.22,1,0.36,1)]" />
+                  <span className="relative group-hover:text-white transition-colors">Volunteer · Partner</span>
+                </Link>
+              </div>
             </div>
           </motion.div>
         </div>
