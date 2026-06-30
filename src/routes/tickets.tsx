@@ -285,6 +285,22 @@ function TicketDialog({ tier, onClose }: { tier: Tier; onClose: () => void }) {
 
   const allowBackdropClose = flowState === "idle" || flowState === "cancelled" || flowState === "success";
 
+  // While Paystack popup is open, unmount our overlay entirely so it
+  // doesn't sit on top of the Paystack iframe.
+  if (flowState === "awaiting") return null;
+
+  // After Paystack closes but before verification completes, show a
+  // lightweight full-screen indicator so the screen isn't blank.
+  if (flowState === "verifying") {
+    return (
+      <div className="fixed inset-0 z-50 bg-paper flex flex-col items-center justify-center gap-5">
+        <div className="h-px w-16 bg-red animate-pulse" />
+        <p className="text-[11px] uppercase tracking-[0.3em] text-muted-foreground">Verifying payment…</p>
+        <p className="font-serif italic text-ink/40 text-sm">Confirming with Paystack. Just a moment.</p>
+      </div>
+    );
+  }
+
   return (
     <motion.div
       initial={{ opacity: 0 }}
@@ -389,37 +405,15 @@ function TicketDialog({ tier, onClose }: { tier: Tier; onClose: () => void }) {
                   </div>
 
                   <button
-                    disabled={flowState === "saving"}
-                    className="w-full bg-red text-white py-5 text-xs uppercase tracking-[0.3em] hover:bg-ink transition-colors disabled:opacity-50"
+                    className="w-full bg-red text-white py-5 text-xs uppercase tracking-[0.3em] hover:bg-ink transition-colors"
                   >
-                    {flowState === "saving" ? "Opening payment…" : "Pay with Paystack →"}
+                    Pay with Paystack →
                   </button>
                   <p className="text-[10px] uppercase tracking-[0.25em] text-muted-foreground text-center">
                     Secured by Paystack · No redirect · Payment opens here
                   </p>
                 </form>
               </div>
-            </motion.div>
-          )}
-
-          {(flowState === "awaiting" || flowState === "verifying") && (
-            <motion.div
-              key="loading"
-              initial={{ opacity: 0 }}
-              animate={{ opacity: 1 }}
-              exit={{ opacity: 0 }}
-              transition={{ duration: 0.18 }}
-              className="p-10 md:p-14 flex flex-col items-center text-center gap-6"
-            >
-              <div className="h-px w-full bg-red animate-pulse" />
-              <p className="text-[11px] uppercase tracking-[0.3em] text-muted-foreground">
-                {flowState === "awaiting" ? "Payment window is open…" : "Verifying your payment…"}
-              </p>
-              {flowState === "verifying" && (
-                <p className="font-serif italic text-ink/50 text-sm max-w-xs">
-                  Confirming with Paystack. This takes just a moment.
-                </p>
-              )}
             </motion.div>
           )}
 
