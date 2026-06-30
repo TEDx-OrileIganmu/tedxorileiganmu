@@ -4,9 +4,9 @@ import { SiteLayout, SectionHeader } from "@/components/site-layout";
 export const Route = createFileRoute("/speakers")({
   head: () => ({
     meta: [
-      { title: "Speakers — TEDxOrileIganmu" },
+      { title: "Speakers · TEDxOrileIganmu" },
       { name: "description", content: "A small, deliberate cast of Nigerian thinkers, builders and storytellers. Names announced as the room is set." },
-      { property: "og:title", content: "Speakers — TEDxOrileIganmu" },
+      { property: "og:title", content: "Speakers · TEDxOrileIganmu" },
       { property: "og:description", content: "The lineup, unfolding." },
     ],
   }),
@@ -26,14 +26,14 @@ function SpeakersPage() {
       <SectionHeader
         kicker="Speakers"
         title={<>The lineup, <span className="font-serif italic font-normal">unfolding.</span></>}
-        lede="We are curating a small, deliberate cast — psychiatrists, linguists, builders, dissenters. Names announced as the room is set."
+        lede="We are curating a small, deliberate cast: psychiatrists, linguists, builders, dissenters. Names announced as the room is set."
       />
 
       <section className="mx-auto max-w-7xl px-6 md:px-10 pb-24 md:pb-32">
         <ol className="divide-y divide-border border-y border-border">
           {slots.map((s) => (
             <li key={s.n} className="grid grid-cols-[auto_1fr_auto] gap-6 md:gap-10 py-6 md:py-8 items-baseline">
-              <span className="font-serif italic text-muted-foreground text-lg md:text-xl">— {s.n}</span>
+              <span className="font-serif italic text-muted-foreground text-lg md:text-xl">{s.n}</span>
               <div className="min-w-0">
                 <p className="font-display text-xl md:text-2xl tracking-[-0.01em] font-medium">To be announced</p>
                 <p className="mt-1 text-sm text-muted-foreground">{s.note}</p>
@@ -64,7 +64,7 @@ function SpeakersPage() {
             ].map((t) => (
               <article key={t.n} className="bg-paper p-8 md:p-10 relative">
                 <div className="absolute top-0 left-0 h-[2px] w-12 bg-red" />
-                <p className="font-serif italic text-muted-foreground text-lg mb-8">— {t.n}</p>
+                <p className="font-serif italic text-muted-foreground text-lg mb-8">{t.n}</p>
                 <h3 className="font-display text-xl md:text-2xl tracking-[-0.01em] leading-tight font-medium">{t.title}</h3>
                 <p className="mt-4 text-sm text-muted-foreground leading-relaxed">{t.desc}</p>
               </article>

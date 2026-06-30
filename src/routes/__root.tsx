@@ -22,7 +22,7 @@ function NotFoundComponent() {
         Lost.
       </h1>
       <p className="mt-6 font-serif italic text-xl text-ink/60 max-w-sm">
-        This page doesn't exist — or was moved.
+        This page doesn't exist, or was moved.
       </p>
       <div className="mt-10">
         <Link
@@ -81,15 +81,15 @@ export const Route = createRootRouteWithContext<{ queryClient: QueryClient }>()(
     meta: [
       { charSet: "utf-8" },
       { name: "viewport", content: "width=device-width, initial-scale=1" },
-      { title: "TEDxOrileIganmu — From Orile, to the World." },
+      { title: "TEDxOrileIganmu · From Orile, to the World." },
       { name: "description", content: "An independently TED-licensed event. October 2026, The Stable by Union Bank, Surulere, Lagos. One hundred seats." },
       { name: "author", content: "TEDxOrileIganmu" },
-      { property: "og:title", content: "TEDxOrileIganmu — From Orile, to the World." },
+      { property: "og:title", content: "TEDxOrileIganmu · From Orile, to the World." },
       { property: "og:description", content: "October 2026 · Surulere, Lagos. One day. One hundred seats. Nigerian ideas, on their own terms." },
       { property: "og:type", content: "website" },
       { name: "twitter:card", content: "summary_large_image" },
       { name: "twitter:site", content: "@tedxorileiganmu" },
-      { name: "twitter:title", content: "TEDxOrileIganmu — From Orile, to the World." },
+      { name: "twitter:title", content: "TEDxOrileIganmu · From Orile, to the World." },
       { name: "twitter:description", content: "October 2026 · Surulere, Lagos. One day. One hundred seats. Nigerian ideas, on their own terms." },
       { property: "og:image", content: "https://storage.googleapis.com/gpt-engineer-file-uploads/DHnhFEaco8SJVoKbXYj80w5CeTl2/social-images/social-1782705149934-D65D7B35-BD0D-4C4C-8C76-52687B04EC2A.webp" },
       { name: "twitter:image", content: "https://storage.googleapis.com/gpt-engineer-file-uploads/DHnhFEaco8SJVoKbXYj80w5CeTl2/social-images/social-1782705149934-D65D7B35-BD0D-4C4C-8C76-52687B04EC2A.webp" },

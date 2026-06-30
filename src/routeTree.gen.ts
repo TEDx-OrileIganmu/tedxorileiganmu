@@ -9,6 +9,7 @@
 // Additionally, you should also exclude this file from your linter and/or formatter to prevent it from being checked or modified.
 
 import { Route as rootRouteImport } from './routes/__root'
+import { Route as VolunteerRouteImport } from './routes/volunteer'
 import { Route as TicketsRouteImport } from './routes/tickets'
 import { Route as SupportRouteImport } from './routes/support'
 import { Route as SpeakersRouteImport } from './routes/speakers'
@@ -18,6 +19,11 @@ import { Route as AuthenticatedRouteRouteImport } from './routes/_authenticated/
 import { Route as IndexRouteImport } from './routes/index'
 import { Route as AuthenticatedAdminRouteImport } from './routes/_authenticated/admin'
 
+const VolunteerRoute = VolunteerRouteImport.update({
+  id: '/volunteer',
+  path: '/volunteer',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const TicketsRoute = TicketsRouteImport.update({
   id: '/tickets',
   path: '/tickets',
@@ -65,6 +71,7 @@ export interface FileRoutesByFullPath {
   '/speakers': typeof SpeakersRoute
   '/support': typeof SupportRoute
   '/tickets': typeof TicketsRoute
+  '/volunteer': typeof VolunteerRoute
   '/admin': typeof AuthenticatedAdminRoute
 }
 export interface FileRoutesByTo {
@@ -74,6 +81,7 @@ export interface FileRoutesByTo {
   '/speakers': typeof SpeakersRoute
   '/support': typeof SupportRoute
   '/tickets': typeof TicketsRoute
+  '/volunteer': typeof VolunteerRoute
   '/admin': typeof AuthenticatedAdminRoute
 }
 export interface FileRoutesById {
@@ -85,6 +93,7 @@ export interface FileRoutesById {
   '/speakers': typeof SpeakersRoute
   '/support': typeof SupportRoute
   '/tickets': typeof TicketsRoute
+  '/volunteer': typeof VolunteerRoute
   '/_authenticated/admin': typeof AuthenticatedAdminRoute
 }
 export interface FileRouteTypes {
@@ -96,6 +105,7 @@ export interface FileRouteTypes {
     | '/speakers'
     | '/support'
     | '/tickets'
+    | '/volunteer'
     | '/admin'
   fileRoutesByTo: FileRoutesByTo
   to:
@@ -105,6 +115,7 @@ export interface FileRouteTypes {
     | '/speakers'
     | '/support'
     | '/tickets'
+    | '/volunteer'
     | '/admin'
   id:
     | '__root__'
@@ -115,6 +126,7 @@ export interface FileRouteTypes {
     | '/speakers'
     | '/support'
     | '/tickets'
+    | '/volunteer'
     | '/_authenticated/admin'
   fileRoutesById: FileRoutesById
 }
@@ -126,10 +138,18 @@ export interface RootRouteChildren {
   SpeakersRoute: typeof SpeakersRoute
   SupportRoute: typeof SupportRoute
   TicketsRoute: typeof TicketsRoute
+  VolunteerRoute: typeof VolunteerRoute
 }
 
 declare module '@tanstack/react-router' {
   interface FileRoutesByPath {
+    '/volunteer': {
+      id: '/volunteer'
+      path: '/volunteer'
+      fullPath: '/volunteer'
+      preLoaderRoute: typeof VolunteerRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/tickets': {
       id: '/tickets'
       path: '/tickets'
@@ -208,7 +228,18 @@ const rootRouteChildren: RootRouteChildren = {
   SpeakersRoute: SpeakersRoute,
   SupportRoute: SupportRoute,
   TicketsRoute: TicketsRoute,
+  VolunteerRoute: VolunteerRoute,
 }
 export const routeTree = rootRouteImport
   ._addFileChildren(rootRouteChildren)
   ._addFileTypes<FileRouteTypes>()
+
+import type { getRouter } from './router.tsx'
+import type { startInstance } from './start.ts'
+declare module '@tanstack/react-start' {
+  interface Register {
+    ssr: true
+    router: Awaited<ReturnType<typeof getRouter>>
+    config: Awaited<ReturnType<typeof startInstance.getOptions>>
+  }
+}

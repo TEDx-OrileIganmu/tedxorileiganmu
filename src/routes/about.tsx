@@ -4,9 +4,9 @@ import { SiteLayout, SectionHeader } from "@/components/site-layout";
 export const Route = createFileRoute("/about")({
   head: () => ({
     meta: [
-      { title: "About — TEDxOrileIganmu" },
+      { title: "About · TEDxOrileIganmu" },
       { name: "description", content: "A gathering of thinkers, builders and storytellers from Lagos and beyond, curated by Ekanem Michael under a TED license." },
-      { property: "og:title", content: "About — TEDxOrileIganmu" },
+      { property: "og:title", content: "About · TEDxOrileIganmu" },
       { property: "og:description", content: "A small room. A long echo. Curated in Lagos by Ekanem Michael." },
     ],
   }),
@@ -29,7 +29,7 @@ function AboutPage() {
           </blockquote>
           <div className="md:pt-4 space-y-6 text-lg md:text-xl leading-relaxed text-ink/80 font-light">
             <p>
-              TEDxOrileIganmu is a gathering of thinkers, builders and storytellers from Lagos and beyond — independently organised under a TED license by <span className="text-ink font-normal">Ekanem Michael</span>.
+              TEDxOrileIganmu is a gathering of thinkers, builders and storytellers from Lagos and beyond, independently organised under a TED license by <span className="text-ink font-normal">Ekanem Michael</span>.
             </p>
             <p>
               Coming October 2026 to The Stable by Union Bank, Surulere. One day. One hundred seats. Ideas that refuse to be polite.
@@ -77,7 +77,7 @@ function AboutPage() {
               </h2>
               <div className="mt-8 space-y-6 text-lg leading-relaxed text-white/75 font-light">
                 <p>
-                  Ekanem is a writer and producer based in Lagos. He holds the TED license for TEDxOrileIganmu and is assembling the room himself — speaker by speaker, idea by idea.
+                  Ekanem is a writer and producer based in Lagos. He holds the TED license for TEDxOrileIganmu and is assembling the room himself, speaker by speaker, idea by idea.
                 </p>
                 <p>
                   His brief to every speaker is the same: <span className="font-serif italic text-white">say the thing you have been quietly thinking for years.</span> No press release voice. No borrowed frameworks. Nigerian thought, on its own terms.

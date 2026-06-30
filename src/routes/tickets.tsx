@@ -12,9 +12,9 @@ export const Route = createFileRoute("/tickets")({
   }),
   head: () => ({
     meta: [
-      { title: "Tickets — TEDxOrileIganmu" },
+      { title: "Tickets · TEDxOrileIganmu" },
       { name: "description", content: "Regular ₦3,500, Standard ₦5,000, VIP ₦25,000. One day, 100 seats, Surulere, Lagos." },
-      { property: "og:title", content: "Tickets — TEDxOrileIganmu" },
+      { property: "og:title", content: "Tickets · TEDxOrileIganmu" },
       { property: "og:description", content: "Three tiers. One day. One hundred seats." },
     ],
   }),
@@ -277,7 +277,7 @@ function TicketDialog({ tier, onClose }: { tier: Tier; onClose: () => void }) {
       await supabase.from("ticket_orders").update({ paystack_access_code: access_code }).eq("payment_reference", ref);
       window.location.href = authorization_url;
     } catch (err) {
-      setErrorMsg(err instanceof Error ? err.message : "Payment setup failed — please try again.");
+      setErrorMsg(err instanceof Error ? err.message : "Payment setup failed. Please try again.");
       setState("error");
     }
   };

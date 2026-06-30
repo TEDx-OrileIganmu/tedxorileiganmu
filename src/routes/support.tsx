@@ -1,16 +1,15 @@
-import { createFileRoute } from "@tanstack/react-router";
+import { createFileRoute, Link } from "@tanstack/react-router";
 import { useState, type ReactNode } from "react";
 import { motion } from "framer-motion";
 import { SiteLayout, SectionHeader } from "@/components/site-layout";
 import { supabase } from "@/integrations/supabase/client";
-import { VOLUNTEER_ROLES } from "@/lib/volunteer-roles";
 
 export const Route = createFileRoute("/support")({
   head: () => ({
     meta: [
-      { title: "Support — TEDxOrileIganmu" },
+      { title: "Support · TEDxOrileIganmu" },
       { name: "description", content: "Volunteer, partner, or donate to TEDxOrileIganmu. Help us bring Nigerian ideas to the world." },
-      { property: "og:title", content: "Support — TEDxOrileIganmu" },
+      { property: "og:title", content: "Support · TEDxOrileIganmu" },
       { property: "og:description", content: "Volunteer, partner, or donate. Be part of the room." },
     ],
   }),
@@ -25,18 +24,45 @@ function SupportPage() {
       <SectionHeader
         kicker="Support"
         title={<>Be part of the <span className="font-serif italic font-normal text-red">room.</span></>}
-        lede="TEDxOrileIganmu runs on intention, generosity, and hands. Whether you give time, money, or reach — you make the room possible."
+        lede="TEDxOrileIganmu runs on intention, generosity, and hands. Whether you give time, money, or reach, you make the room possible."
       />
 
       {/* Volunteer */}
-      <Section id="volunteer" kicker="Volunteer" heading="Give us your hands."
-        lede="We are assembling a small crew. No experience required — just presence, care, and showing up. Pick where you fit; we'll brief you closer to October.">
-        <VolunteerForm />
-      </Section>
+      <section id="volunteer" className="border-t border-border">
+        <div className="mx-auto max-w-7xl px-6 md:px-10 py-24 md:py-32">
+          <motion.div
+            initial={{ opacity: 0, y: 20 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true, margin: "-100px" }}
+            transition={{ duration: 0.6, ease }}
+            className="grid gap-12 md:grid-cols-2 md:gap-16 items-center"
+          >
+            <div>
+              <div className="flex items-center gap-3 text-[11px] uppercase tracking-[0.25em] text-muted-foreground mb-6">
+                <span className="h-px w-6 bg-red" /><span>Volunteer</span>
+              </div>
+              <h2 className="font-display font-medium text-3xl md:text-5xl tracking-[-0.02em] leading-[1.02] mb-6">
+                Give us your <span className="font-serif italic">hands.</span>
+              </h2>
+              <p className="font-serif italic text-lg md:text-xl text-ink/70 leading-relaxed max-w-md mb-8">
+                We are assembling a small crew. No experience required, just presence, care, and showing up. Pick where you fit.
+              </p>
+            </div>
+            <div>
+              <Link
+                to="/volunteer"
+                className="group relative inline-flex items-center justify-center bg-red text-white px-10 py-5 text-xs uppercase tracking-[0.25em] overflow-hidden w-full md:w-auto"
+              >
+                <span className="absolute inset-0 bg-ink translate-y-full group-hover:translate-y-0 transition-transform duration-500 ease-[cubic-bezier(0.22,1,0.36,1)]" />
+                <span className="relative">Apply to Volunteer →</span>
+              </Link>
+              <p className="mt-4 text-sm text-muted-foreground">12 roles · one day · October 2026</p>
+            </div>
+          </motion.div>
+        </div>
+      </section>
 
       {/* Partner */}
       <Section id="partner" kicker="Partner" heading="Amplify the idea." dark={false} reverse
-        lede="Brand partners, media houses, and community organisations — align your name with one of the most intimate idea stages in Lagos."
+        lede="Brand partners, media houses, and community organisations. Align your name with one of the most intimate idea stages in Lagos."
         sideContent={
           <ul className="space-y-3 text-sm text-ink/70">
             {[
@@ -45,7 +71,7 @@ function SupportPage() {
               "Post-event footage and photography credit",
               "Curator-led partnership report and reach metrics",
             ].map((b) => (
-              <li key={b} className="flex gap-3"><span className="text-red">—</span><span>{b}</span></li>
+              <li key={b} className="flex gap-3"><span className="text-red">◆</span><span>{b}</span></li>
             ))}
           </ul>
         }
@@ -129,46 +155,6 @@ function Section({
   );
 }
 
-/* ---- Volunteer ---- */
-function VolunteerForm() {
-  const [state, setState] = useState<"idle" | "submitting" | "done" | "error">("idle");
-  const [errorMsg, setErrorMsg] = useState("");
-  const [form, setForm] = useState({ full_name: "", email: "", phone: "", role: "", availability: "", experience: "", note: "" });
-
-  const submit = async (e: React.FormEvent) => {
-    e.preventDefault();
-    setState("submitting");
-    const { error } = await supabase.from("volunteer_applications").insert({
-      full_name: form.full_name, email: form.email, phone: form.phone, role: form.role,
-      availability: form.availability || null, experience: form.experience || null, note: form.note || null,
-    });
-    if (error) { setErrorMsg(error.message); setState("error"); return; }
-    setState("done");
-  };
-
-  if (state === "done") return <Success name={form.full_name} text="We will be in touch with volunteer briefing details as October draws closer." />;
-
-  return (
-    <form onSubmit={submit} className="space-y-5">
-      <Field label="Full Name"><Input value={form.full_name} onChange={(v) => setForm({ ...form, full_name: v })} required /></Field>
-      <Field label="Email"><Input type="email" value={form.email} onChange={(v) => setForm({ ...form, email: v })} required /></Field>
-      <Field label="Phone"><Input value={form.phone} onChange={(v) => setForm({ ...form, phone: v })} placeholder="+234 ..." required /></Field>
-      <Field label="What can you help with?">
-        <select required value={form.role} onChange={(e) => setForm({ ...form, role: e.target.value })}
-          className="w-full bg-paper border-b border-ink/25 py-3 focus:outline-none focus:border-red text-lg text-ink appearance-none">
-          <option value="">Choose a role</option>
-          {VOLUNTEER_ROLES.map((r) => <option key={r}>{r}</option>)}
-        </select>
-      </Field>
-      <Field label="Availability (optional)"><Input value={form.availability} onChange={(v) => setForm({ ...form, availability: v })} placeholder="e.g. Event day + 2 prep days" /></Field>
-      <Field label="Past experience (optional)"><Textarea value={form.experience} onChange={(v) => setForm({ ...form, experience: v })} placeholder="Briefly — events, organisations, what you've done." /></Field>
-      <Field label="Note (optional)"><Textarea value={form.note} onChange={(v) => setForm({ ...form, note: v })} placeholder="Anything else?" /></Field>
-      {state === "error" && <p className="text-sm text-red">{errorMsg}</p>}
-      <Submit busy={state === "submitting"} label="Volunteer →" busyLabel="Sending…" />
-    </form>
-  );
-}
-
 /* ---- Partner ---- */
 function PartnerForm() {
   const [state, setState] = useState<"idle" | "submitting" | "done" | "error">("idle");
@@ -233,7 +219,7 @@ function DonateForm() {
   if (state === "done") return (
     <div className="border border-white/15 p-10 bg-white/5">
       <p className="font-serif italic text-2xl text-white">Thank you, {form.donor_name}.</p>
-      <p className="mt-3 text-white/60 text-sm">Send your transfer receipt to tedxorileiganmu@gmail.com — every gift is acknowledged personally.</p>
+      <p className="mt-3 text-white/60 text-sm">Send your transfer receipt to tedxorileiganmu@gmail.com. Every gift is acknowledged personally.</p>
     </div>
   );
 

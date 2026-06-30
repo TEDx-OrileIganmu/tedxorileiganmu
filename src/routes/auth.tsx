@@ -5,7 +5,7 @@ import { supabase } from "@/integrations/supabase/client";
 
 export const Route = createFileRoute("/auth")({
   ssr: false,
-  head: () => ({ meta: [{ title: "Sign in — TEDxOrileIganmu Admin" }] }),
+  head: () => ({ meta: [{ title: "Sign in · TEDxOrileIganmu Admin" }] }),
   component: AuthPage,
 });
 
