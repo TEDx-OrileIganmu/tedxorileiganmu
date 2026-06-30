@@ -361,12 +361,11 @@ function InlineSelect({
 
 type OverviewStats = {
   paid: number;
-  pending: number;
-  failed: number;
   volunteers: number;
   partners: number;
   donations: number;
-  raised: number;
+  ticketRevenue: number;
+  donationRevenue: number;
 };
 
 function TrendBar({ value, max = SEAT_CAPACITY, label }: { value: number; max?: number; label?: string }) {
@@ -396,34 +395,27 @@ function Overview() {
       const [ticketData, v, p, donationData] = await Promise.all([
         (supabase as any)
           .from("ticket_orders")
-          .select("payment_status, amount_naira, tier")
-          .in("tier", ["regular", "standard", "vip"]),
+          .select("amount_naira, tier")
+          .in("tier", ["regular", "standard", "vip"])
+          .eq("payment_status", "paid"),
         supabase.from("volunteer_applications").select("id", { count: "exact", head: true }),
         supabase.from("partner_inquiries").select("id", { count: "exact", head: true }),
         supabase.from("donations").select("amount_naira").eq("payment_status", "paid"),
       ]);
 
-      const tickets: { payment_status: string; amount_naira: number }[] = ticketData.data ?? [];
-      const paidTickets = tickets.filter((t) => t.payment_status === "paid");
-      const pendingTickets = tickets.filter((t) => t.payment_status === "pending");
-      const failedTickets = tickets.filter(
-        (t) => t.payment_status === "failed" || t.payment_status === "refunded",
-      );
+      const paidTickets: { amount_naira: number }[] = ticketData.data ?? [];
+      const paidDonations: { amount_naira: number }[] = donationData.data ?? [];
 
       const ticketRevenue = paidTickets.reduce((s, r) => s + (r.amount_naira ?? 0), 0);
-      const donationRevenue = (donationData.data ?? []).reduce(
-        (s: number, r: { amount_naira: number }) => s + (r.amount_naira ?? 0),
-        0,
-      );
+      const donationRevenue = paidDonations.reduce((s, r) => s + (r.amount_naira ?? 0), 0);
 
       setStats({
         paid: paidTickets.length,
-        pending: pendingTickets.length,
-        failed: failedTickets.length,
         volunteers: v.count ?? 0,
         partners: p.count ?? 0,
-        donations: donationData.data?.length ?? 0,
-        raised: ticketRevenue + donationRevenue,
+        donations: paidDonations.length,
+        ticketRevenue,
+        donationRevenue,
       });
     })();
   }, []);
@@ -450,7 +442,7 @@ function Overview() {
               {stats.paid}
             </p>
             <p className="mt-2 text-[11px] text-white/50">
-              Paid &amp; verified · ₦{stats.raised.toLocaleString()} received
+              Paid &amp; verified via Paystack · ₦{stats.ticketRevenue.toLocaleString()} from tickets
             </p>
             <TrendBar value={stats.paid} label={`${stats.paid} of ${SEAT_CAPACITY} seats filled`} />
           </motion.div>
@@ -458,10 +450,10 @@ function Overview() {
           <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
             {[
               {
-                label: "Pending orders",
-                value: stats.pending,
-                sub: `Paystack opened but not completed`,
-                trend: stats.pending,
+                label: "Seats remaining",
+                value: Math.max(0, SEAT_CAPACITY - stats.paid),
+                sub: `${SEAT_CAPACITY} total capacity`,
+                trend: SEAT_CAPACITY - stats.paid,
                 max: SEAT_CAPACITY,
               },
               {
@@ -481,7 +473,7 @@ function Overview() {
               {
                 label: "Donations",
                 value: stats.donations,
-                sub: `₦${stats.donations > 0 ? (stats.raised - stats.paid * 3500).toLocaleString() : "0"} from gifts`,
+                sub: stats.donationRevenue > 0 ? `₦${stats.donationRevenue.toLocaleString()} received` : "None yet",
                 trend: stats.donations,
                 max: 50,
               },
@@ -515,8 +507,7 @@ function Overview() {
             <span className="h-px w-6 bg-red shrink-0" />
             <p className="text-[11px] text-muted-foreground">
               <span className="font-medium text-ink">{stats.paid}</span> confirmed ·{" "}
-              <span className="font-medium text-ink">{stats.pending}</span> pending ·{" "}
-              <span className="font-medium text-ink">{stats.failed}</span> failed/refunded ·{" "}
+              <span className="font-medium text-ink">{SEAT_CAPACITY - stats.paid}</span> seats left ·{" "}
               data refreshes on page load
             </p>
           </motion.div>
@@ -657,7 +648,7 @@ function TicketsTab() {
                     ) : (
                       <InlineSelect
                         value={r.payment_status}
-                        options={["pending", "failed", "refunded"]}
+                        options={["failed", "refunded"]}
                         onChange={(v) => updateStatus(r.id, v)}
                       />
                     )}

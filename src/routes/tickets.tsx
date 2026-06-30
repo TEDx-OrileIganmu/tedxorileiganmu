@@ -194,37 +194,23 @@ function TicketDialog({ tier, onClose }: { tier: Tier; onClose: () => void }) {
 
   const submit = async (e: React.FormEvent) => {
     e.preventDefault();
-    setFlowState("saving");
+
+    if (!window.PaystackPop) {
+      setFlowState("saving");
+      try {
+        await loadPaystackScript();
+      } catch {
+        setErrorMsg("Could not load payment system. Check your connection and try again.");
+        setFlowState("error");
+        return;
+      }
+    }
+
     const ref = `TXOI-${tier.id.toUpperCase()}-${Date.now().toString(36).toUpperCase()}`;
-
-    const { error: dbError } = await supabase.from("ticket_orders").insert({
-      full_name: form.full_name,
-      email: form.email,
-      phone: form.phone || null,
-      tier: tier.id,
-      amount_naira: tier.price * form.quantity,
-      quantity: form.quantity,
-      payment_reference: ref,
-      payment_status: "pending",
-    });
-    if (dbError) {
-      setErrorMsg(dbError.message);
-      setFlowState("error");
-      return;
-    }
-
-    try {
-      await loadPaystackScript();
-    } catch {
-      setErrorMsg("Could not load payment system. Check your connection and try again.");
-      setFlowState("error");
-      return;
-    }
-
     paymentDoneRef.current = false;
     setFlowState("awaiting");
 
-    const handler = window.PaystackPop.setup({
+    window.PaystackPop.setup({
       key: import.meta.env.VITE_PAYSTACK_PUBLIC_KEY as string,
       email: form.email,
       amount: tier.price * form.quantity * 100,
@@ -241,10 +227,16 @@ function TicketDialog({ tier, onClose }: { tier: Tier; onClose: () => void }) {
         try {
           const result = await verifyPayment({ data: { reference: response.reference } });
           if (result.status === "success") {
-            await supabase
-              .from("ticket_orders")
-              .update({ payment_status: "paid" })
-              .eq("payment_reference", response.reference);
+            await supabase.from("ticket_orders").insert({
+              full_name: form.full_name,
+              email: form.email,
+              phone: form.phone || null,
+              tier: tier.id,
+              amount_naira: tier.price * form.quantity,
+              quantity: form.quantity,
+              payment_reference: response.reference,
+              payment_status: "paid",
+            });
 
             const sd: SuccessData = {
               name: form.full_name,
@@ -285,9 +277,7 @@ function TicketDialog({ tier, onClose }: { tier: Tier; onClose: () => void }) {
           setFlowState("cancelled");
         }
       },
-    });
-
-    handler.openIframe();
+    }).openIframe();
   };
 
   const isFormScreen =

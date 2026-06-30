@@ -236,29 +236,24 @@ function DonateForm() {
 
   const submit = async (e: React.FormEvent) => {
     e.preventDefault();
-    setFlow("saving");
+
+    if (!window.PaystackPop) {
+      setFlow("saving");
+      try {
+        await loadPaystackScript();
+      } catch {
+        setErrorMsg("Could not load payment system. Please refresh and try again.");
+        setFlow("error");
+        return;
+      }
+    }
+
     const ref = `TXOI-DON-${Date.now().toString(36).toUpperCase()}`;
-    const { error } = await supabase.from("donations").insert({
-      donor_name: form.donor_name, email: form.email, phone: form.phone || null,
-      amount_naira: form.amount, tier: form.tier, message: form.message || null,
-      payment_reference: ref, payment_status: "pending",
-    });
-    if (error) { setErrorMsg(error.message); setFlow("error"); return; }
-    setDonationRef(ref);
     paymentDoneRef.current = false;
     setFlow("awaiting");
 
-    try {
-      await loadPaystackScript();
-    } catch {
-      setErrorMsg("Could not load payment system. Please refresh and try again.");
-      setFlow("error");
-      return;
-    }
-
-    const key = import.meta.env.VITE_PAYSTACK_PUBLIC_KEY as string;
     window.PaystackPop.setup({
-      key,
+      key: import.meta.env.VITE_PAYSTACK_PUBLIC_KEY as string,
       email: form.email,
       amount: form.amount * 100,
       ref,
@@ -269,7 +264,12 @@ function DonateForm() {
         try {
           const result = await verifyPayment({ data: { reference: response.reference } });
           if (result.status === "success") {
-            await supabase.from("donations").update({ payment_status: "paid" }).eq("payment_reference", response.reference);
+            const { error } = await supabase.from("donations").insert({
+              donor_name: form.donor_name, email: form.email, phone: form.phone || null,
+              amount_naira: form.amount, tier: form.tier, message: form.message || null,
+              payment_reference: response.reference, payment_status: "paid",
+            });
+            if (!error) setDonationRef(response.reference);
             setFlow("success");
           } else {
             setErrorMsg("Payment not completed. Please try again.");
