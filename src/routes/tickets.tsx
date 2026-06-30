@@ -478,7 +478,7 @@ function TicketSuccess({ data, onClose }: { data: SuccessData; onClose: () => vo
             { label: "Attendee", value: data.name },
             { label: "Seats", value: `${data.quantity} seat${data.quantity > 1 ? "s" : ""}` },
             { label: "Paid", value: `₦${data.amount.toLocaleString()}` },
-            { label: "Date", value: "6 March 2027" },
+            { label: "Date", value: "Saturday, 6 March 2027" },
             { label: "Venue", value: "The Stable by Union Bank, Surulere" },
           ].map((r) => (
             <div key={r.label} className="flex items-baseline justify-between px-6 py-3.5">
@@ -494,6 +494,19 @@ function TicketSuccess({ data, onClose }: { data: SuccessData; onClose: () => vo
           </span>
         </div>
       </div>
+
+      {/* Directions link */}
+      <a
+        href="https://www.google.com/maps/dir/?api=1&destination=The+Stable+by+Union+Bank+Surulere+Lagos+Nigeria"
+        target="_blank" rel="noreferrer"
+        className="flex items-center justify-between border border-border px-5 py-4 hover:border-ink transition-colors group"
+      >
+        <div>
+          <p className="text-[9px] uppercase tracking-[0.25em] text-muted-foreground mb-1">Venue</p>
+          <p className="text-sm font-medium text-ink">The Stable by Union Bank · Surulere, Lagos</p>
+        </div>
+        <span className="text-muted-foreground group-hover:text-red group-hover:translate-x-1 transition-all duration-300 text-sm">→</span>
+      </a>
 
       {/* Actions */}
       <div className="flex flex-col sm:flex-row gap-3">

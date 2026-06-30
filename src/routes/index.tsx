@@ -124,11 +124,26 @@ function HomePage() {
             transition={{ duration: 0.7, ease, delay: 0.48 }}
             className="mt-14 md:mt-20 grid gap-10 md:grid-cols-[1.5fr_1fr] md:gap-20 items-end pb-20 md:pb-32"
           >
-            <div className="space-y-5">
-              <p className="font-serif text-xl md:text-2xl text-ink/60 max-w-xl leading-snug">
-                6 March 2027 · The Stable by Union Bank, Surulere, Lagos. One day. A small room. Ideas that refuse to be polite.
-              </p>
-              <p className="text-[11px] uppercase tracking-[0.2em] text-ink/40 font-light italic font-serif">
+            <div className="space-y-6">
+              {/* Date + Venue structured display */}
+              <div className="flex flex-col gap-3">
+                <div className="flex items-baseline gap-4 flex-wrap">
+                  <span className="text-[10px] uppercase tracking-[0.3em] text-red">Saturday</span>
+                  <span className="font-display text-2xl md:text-3xl tracking-[-0.02em] font-medium">6 March 2027</span>
+                </div>
+                <div className="flex items-center gap-3 flex-wrap">
+                  <span className="text-[10px] uppercase tracking-[0.3em] text-muted-foreground">Venue</span>
+                  <span className="h-px w-4 bg-border shrink-0" />
+                  <a
+                    href="https://www.google.com/maps/dir/?api=1&destination=The+Stable+by+Union+Bank+Surulere+Lagos+Nigeria"
+                    target="_blank" rel="noreferrer"
+                    className="font-serif italic text-lg text-ink/70 hover:text-red transition-colors leading-snug"
+                  >
+                    The Stable by Union Bank, Surulere, Lagos →
+                  </a>
+                </div>
+              </div>
+              <p className="text-[11px] uppercase tracking-[0.2em] text-ink/35 font-serif italic">
                 Ideas that transcend place, perspective, and possibility.
               </p>
             </div>

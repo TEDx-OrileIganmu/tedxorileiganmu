@@ -57,26 +57,96 @@ function AboutPage() {
 
         {/* Event facts */}
         <div className="mt-20 grid gap-px grid-cols-1 sm:grid-cols-3 bg-border border border-border">
-          {[
-            { k: "When", t: "6 March 2027", s: "One-day programme" },
-            { k: "Where", t: "The Stable by Union Bank", s: "Surulere, Lagos" },
-            { k: "How", t: "TED-licensed", s: "Independently organised" },
-          ].map((it, i) => (
-            <motion.div
-              key={it.k}
-              initial={{ opacity: 0, y: 16 }}
-              whileInView={{ opacity: 1, y: 0 }}
-              viewport={{ once: true, margin: "-60px" }}
-              transition={{ duration: 0.6, ease, delay: i * 0.08 }}
-              className="bg-paper p-8 md:p-10 relative"
+          {/* Date */}
+          <motion.div
+            initial={{ opacity: 0, y: 16 }} whileInView={{ opacity: 1, y: 0 }}
+            viewport={{ once: true, margin: "-60px" }} transition={{ duration: 0.6, ease }}
+            className="bg-paper p-8 md:p-10 relative"
+          >
+            <div className="absolute top-0 left-0 right-0 h-[3px] bg-red" />
+            <p className="text-[10px] uppercase tracking-[0.25em] text-muted-foreground mb-6">Date</p>
+            <p className="text-[10px] uppercase tracking-[0.2em] text-red mb-3">Saturday</p>
+            <h3 className="font-display text-4xl md:text-5xl tracking-[-0.03em] font-medium leading-none">6 March</h3>
+            <p className="font-display text-5xl md:text-6xl tracking-[-0.03em] font-medium leading-none text-ink/12 mt-1">2027</p>
+            <div className="mt-6 space-y-1.5 text-[11px] text-muted-foreground">
+              <p>Doors open · 8:30 AM</p>
+              <p>Programme · Full day</p>
+            </div>
+          </motion.div>
+
+          {/* Venue */}
+          <motion.div
+            initial={{ opacity: 0, y: 16 }} whileInView={{ opacity: 1, y: 0 }}
+            viewport={{ once: true, margin: "-60px" }} transition={{ duration: 0.6, ease, delay: 0.08 }}
+            className="bg-paper p-8 md:p-10 relative"
+          >
+            <div className="absolute top-0 left-0 right-0 h-[3px] bg-red" />
+            <p className="text-[10px] uppercase tracking-[0.25em] text-muted-foreground mb-6">Venue</p>
+            <h3 className="font-display text-3xl md:text-4xl tracking-[-0.02em] font-medium leading-tight">The Stable</h3>
+            <p className="font-serif italic text-lg text-ink/50 mt-1">by Union Bank</p>
+            <div className="mt-6 space-y-1.5 text-[11px] text-muted-foreground">
+              <p>Surulere · Lagos · Nigeria</p>
+            </div>
+            <a
+              href="https://www.google.com/maps/dir/?api=1&destination=The+Stable+by+Union+Bank+Surulere+Lagos+Nigeria"
+              target="_blank" rel="noreferrer"
+              className="mt-6 inline-flex items-center gap-2 text-[10px] uppercase tracking-[0.2em] text-ink border-b border-red pb-px hover:text-red transition-colors"
             >
-              <div className="absolute top-0 left-0 right-0 h-px bg-red" />
-              <p className="text-[10px] uppercase tracking-[0.2em] text-muted-foreground mb-8">{it.k}</p>
-              <h3 className="font-display text-2xl md:text-3xl tracking-[-0.01em] font-medium leading-tight">{it.t}</h3>
-              <p className="mt-3 text-sm text-muted-foreground">{it.s}</p>
-            </motion.div>
-          ))}
+              Get Directions →
+            </a>
+          </motion.div>
+
+          {/* License */}
+          <motion.div
+            initial={{ opacity: 0, y: 16 }} whileInView={{ opacity: 1, y: 0 }}
+            viewport={{ once: true, margin: "-60px" }} transition={{ duration: 0.6, ease, delay: 0.16 }}
+            className="bg-paper p-8 md:p-10 relative"
+          >
+            <div className="absolute top-0 left-0 right-0 h-[3px] bg-red" />
+            <p className="text-[10px] uppercase tracking-[0.25em] text-muted-foreground mb-6">Format</p>
+            <h3 className="font-display text-3xl md:text-4xl tracking-[-0.02em] font-medium leading-tight">TED-Licensed</h3>
+            <p className="font-serif italic text-lg text-ink/50 mt-1">Independently organised</p>
+            <div className="mt-6 space-y-1.5 text-[11px] text-muted-foreground">
+              <p>100 seats · No exceptions</p>
+              <p>In-person · Surulere, Lagos</p>
+            </div>
+          </motion.div>
         </div>
+      </section>
+
+      {/* Venue map */}
+      <section className="bg-ink">
+        <motion.div
+          initial={{ opacity: 0 }} whileInView={{ opacity: 1 }}
+          viewport={{ once: true, margin: "-60px" }} transition={{ duration: 0.8, ease }}
+          className="relative overflow-hidden"
+        >
+          <iframe
+            src="https://maps.google.com/maps?q=The+Stable+by+Union+Bank,+Surulere,+Lagos,+Nigeria&output=embed"
+            width="100%"
+            height="400"
+            style={{ border: 0, display: "block" }}
+            allowFullScreen
+            loading="lazy"
+            referrerPolicy="no-referrer-when-downgrade"
+            title="The Stable by Union Bank, Surulere, Lagos"
+          />
+          {/* Overlay bar */}
+          <div className="absolute bottom-0 left-0 right-0 bg-ink/95 backdrop-blur-sm px-6 md:px-10 py-5 flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+            <div>
+              <p className="text-[9px] uppercase tracking-[0.3em] text-white/35 mb-1.5">Event Venue</p>
+              <p className="font-display text-white text-xl md:text-2xl tracking-[-0.01em] font-medium">The Stable by Union Bank</p>
+              <p className="text-white/50 text-sm mt-0.5">Surulere, Lagos · Nigeria · 6 March 2027</p>
+            </div>
+            <a
+              href="https://www.google.com/maps/dir/?api=1&destination=The+Stable+by+Union+Bank+Surulere+Lagos+Nigeria"
+              target="_blank" rel="noreferrer"
+              className="shrink-0 inline-flex items-center gap-2 border border-red text-red px-6 py-3 text-[10px] uppercase tracking-[0.25em] hover:bg-red hover:text-white transition-colors"
+            >
+              Open in Maps →
+            </a>
+          </div>
+        </motion.div>
       </section>
 
       {/* Organiser profile */}
