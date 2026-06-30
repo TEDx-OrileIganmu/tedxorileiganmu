@@ -176,3 +176,55 @@ h1{font-size:34px;font-weight:700;color:#111;letter-spacing:-.02em;margin-bottom
     }
     return { sent: true };
   });
+
+type AdminMessageInput = {
+  to: string;
+  name: string;
+  subject: string;
+  body: string;
+};
+
+export const sendAdminMessage = createServerFn({ method: "POST" })
+  .validator((d: AdminMessageInput) => d)
+  .handler(async ({ data }) => {
+    const apiKey = process.env.RESEND_API_KEY;
+    if (!apiKey) return { sent: false, reason: "no_key" };
+
+    const bodyHtml = data.body
+      .split("\n")
+      .map((line) => `<p style="margin:0 0 14px;color:#374151;font-size:15px;line-height:1.6;">${line || "&nbsp;"}</p>`)
+      .join("");
+
+    const html = `<!DOCTYPE html>
+<html lang="en">
+<head><meta charset="utf-8"/><meta name="viewport" content="width=device-width,initial-scale=1"/></head>
+<body style="margin:0;padding:0;background:#f4f4f4;font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;">
+<div style="max-width:600px;margin:32px auto;background:#fff;">
+  <div style="background:#111;padding:28px 32px;border-top:4px solid #E62B1E;">
+    <span style="background:#E62B1E;color:#fff;font-size:13px;font-weight:900;letter-spacing:.08em;padding:5px 8px;line-height:1;">TED</span><span style="background:#111;color:#E62B1E;border:1px solid #E62B1E;font-size:13px;font-weight:900;padding:5px 8px;line-height:1;">x</span><span style="margin-left:10px;color:rgba(255,255,255,.5);font-size:11px;letter-spacing:.25em;text-transform:uppercase;">OrileIganmu</span>
+  </div>
+  <div style="padding:36px 32px;">
+    <p style="margin:0 0 6px;font-size:11px;letter-spacing:.2em;text-transform:uppercase;color:#999;">Message for</p>
+    <p style="margin:0 0 28px;font-size:22px;font-weight:700;color:#111;letter-spacing:-.01em;">${data.name}</p>
+    <div style="border-left:3px solid #E62B1E;padding-left:20px;margin-bottom:32px;">${bodyHtml}</div>
+    <div style="border-top:1px solid #eee;padding-top:24px;">
+      <p style="margin:0;color:#999;font-size:11px;line-height:1.7;">TEDxOrileIganmu &middot; The Stable by Union Bank &middot; Surulere, Lagos &middot; 6&nbsp;March&nbsp;2027</p>
+    </div>
+  </div>
+</div>
+</body>
+</html>`;
+
+    const from = process.env.RESEND_FROM_EMAIL ?? "TEDxOrileIganmu <noreply@tedxorileiganmu.com>";
+    try {
+      const res = await fetch("https://api.resend.com/emails", {
+        method: "POST",
+        headers: { Authorization: `Bearer ${apiKey}`, "Content-Type": "application/json" },
+        body: JSON.stringify({ from, to: [data.to], subject: data.subject, html }),
+      });
+      if (!res.ok) return { sent: false, reason: await res.text() };
+    } catch {
+      return { sent: false, reason: "fetch_error" };
+    }
+    return { sent: true };
+  });

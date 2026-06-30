@@ -3,6 +3,7 @@ import { useEffect, useState, useCallback } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import { supabase } from "@/integrations/supabase/client";
 import { useAuth } from "@/hooks/use-auth";
+import { sendAdminMessage } from "@/lib/paystack";
 
 const LOGO = "/logo-black.png";
 const SEAT_CAPACITY = 100;
@@ -534,9 +535,167 @@ type TicketRow = {
 
 const TICKET_STATUSES = ["pending", "paid", "failed", "refunded"];
 
+const TIER_NAMES: Record<string, string> = { regular: "Regular", standard: "Standard", vip: "VIP" };
+
+function viewTicketAdmin(r: TicketRow) {
+  const origin = typeof window !== "undefined" ? window.location.origin : "";
+  const logoSrc = `${origin}/logo-white.png`;
+  const tierName = TIER_NAMES[r.tier] ?? r.tier;
+  const html = `<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8"/>
+<title>TEDxOrileIganmu · ${r.full_name}</title>
+<style>
+*{margin:0;padding:0;box-sizing:border-box;}
+body{background:#1a1a1a;min-height:100vh;display:flex;flex-direction:column;align-items:center;justify-content:center;padding:40px 20px;font-family:-apple-system,BlinkMacSystemFont,'Inter','Segoe UI',sans-serif;gap:20px;}
+.hint{color:rgba(255,255,255,.3);font-size:10px;letter-spacing:.3em;text-transform:uppercase;text-align:center;}
+.ticket{width:min(860px,100%);background:#111;border:1px solid #252525;display:flex;position:relative;overflow:visible;}
+.ticket::before{content:'';position:absolute;top:0;left:0;right:0;height:4px;background:#E62B1E;}
+.ticket::after{content:'';position:absolute;top:-8px;right:179px;width:16px;height:16px;border-radius:50%;background:#1a1a1a;border:1px solid #252525;}
+.main{flex:1;padding:40px 48px;display:flex;flex-direction:column;gap:28px;border-right:1px dashed #2a2a2a;position:relative;}
+.main::after{content:'';position:absolute;bottom:-8px;right:-8px;width:16px;height:16px;border-radius:50%;background:#1a1a1a;border:1px solid #252525;}
+.stub{width:180px;padding:32px 20px;display:flex;flex-direction:column;align-items:center;justify-content:space-between;gap:16px;text-align:center;}
+.top{display:flex;align-items:flex-start;justify-content:space-between;}
+.logo-img{height:22px;width:auto;object-fit:contain;}
+.vol{color:rgba(255,255,255,.2);font-size:9px;letter-spacing:.35em;text-transform:uppercase;}
+.attendee-label{color:rgba(255,255,255,.35);font-size:8px;letter-spacing:.35em;text-transform:uppercase;margin-bottom:8px;}
+.attendee-name{color:#fff;font-size:clamp(28px,4vw,52px);font-weight:700;letter-spacing:-.025em;line-height:1;}
+.info-row{display:flex;gap:36px;flex-wrap:wrap;}
+.info-label{color:rgba(255,255,255,.3);font-size:8px;letter-spacing:.3em;text-transform:uppercase;margin-bottom:5px;}
+.info-val{color:rgba(255,255,255,.75);font-size:13px;}
+.theme-val{color:#E62B1E;}
+.tier-badge{background:#E62B1E;color:#fff;font-size:10px;font-weight:700;letter-spacing:.25em;text-transform:uppercase;padding:7px 0;width:100%;}
+.vertical-text{color:rgba(255,255,255,.12);font-size:8px;letter-spacing:.3em;text-transform:uppercase;writing-mode:vertical-rl;transform:rotate(180deg);flex:1;}
+.admit{color:rgba(255,255,255,.2);font-size:8px;letter-spacing:.35em;text-transform:uppercase;}
+.ref-label{color:rgba(255,255,255,.2);font-size:7px;letter-spacing:.25em;text-transform:uppercase;margin-bottom:3px;}
+.ref-code{color:rgba(255,255,255,.4);font-size:9px;font-family:monospace;letter-spacing:.05em;word-break:break-all;}
+.not-resale{color:rgba(255,255,255,.12);font-size:7px;letter-spacing:.2em;text-transform:uppercase;margin-top:3px;}
+@media print{body{background:#111!important;padding:0;-webkit-print-color-adjust:exact;print-color-adjust:exact;display:block;}.hint{display:none;}.ticket{width:100%;page-break-inside:avoid;}@page{size:A4 landscape;margin:15mm;}}
+</style>
+</head>
+<body>
+<p class="hint">Print dialogue will open · Save as PDF to keep your ticket</p>
+<div class="ticket">
+  <div class="main">
+    <div class="top">
+      <img class="logo-img" src="${logoSrc}" alt="TEDxOrileIganmu" onerror="this.style.display='none'"/>
+      <span class="vol">Vol. 01 · 2027</span>
+    </div>
+    <div><p class="attendee-label">Attendee</p><p class="attendee-name">${r.full_name}</p></div>
+    <div class="info-row">
+      <div><p class="info-label">Date</p><p class="info-val">6 March 2027</p></div>
+      <div><p class="info-label">Venue</p><p class="info-val">The Stable by Union Bank</p></div>
+      <div><p class="info-label">Location</p><p class="info-val">Surulere, Lagos</p></div>
+      <div><p class="info-label">Theme</p><p class="info-val theme-val">Beyond Boundaries</p></div>
+    </div>
+  </div>
+  <div class="stub">
+    <span class="tier-badge">${tierName}</span>
+    <span class="vertical-text">Beyond Boundaries · Ideas Worth Spreading · TEDxOrileIganmu</span>
+    <p class="admit">Admit One</p>
+    <div><p class="ref-label">Ref</p><p class="ref-code">${r.payment_reference ?? "—"}</p><p class="not-resale">Not for resale</p></div>
+  </div>
+</div>
+<script>setTimeout(function(){window.print();},700);</script>
+</body>
+</html>`;
+  const win = window.open("", "_blank", "width=920,height=480,scrollbars=yes,resizable=yes");
+  if (!win) { alert("Allow pop-ups to view the ticket."); return; }
+  win.document.write(html);
+  win.document.close();
+}
+
+function MessageModal({ row, onClose }: { row: TicketRow; onClose: () => void }) {
+  const [subject, setSubject] = useState(`TEDxOrileIganmu · 6 March 2027`);
+  const [body, setBody] = useState("");
+  const [status, setStatus] = useState<"idle" | "sending" | "sent" | "error">("idle");
+  const [errorMsg, setErrorMsg] = useState("");
+
+  const send = async (e: React.FormEvent) => {
+    e.preventDefault();
+    setStatus("sending");
+    try {
+      const result = await sendAdminMessage({ data: { to: row.email, name: row.full_name, subject, body } });
+      if (result.sent) { setStatus("sent"); }
+      else { setErrorMsg(result.reason ?? "Failed to send."); setStatus("error"); }
+    } catch (err) {
+      setErrorMsg(err instanceof Error ? err.message : "Failed to send.");
+      setStatus("error");
+    }
+  };
+
+  return (
+    <div className="fixed inset-0 z-50 bg-ink/70 backdrop-blur-sm flex items-end md:items-center justify-center p-0 md:p-6" onClick={onClose}>
+      <motion.div
+        initial={{ y: 40, opacity: 0 }} animate={{ y: 0, opacity: 1 }}
+        transition={{ duration: 0.35, ease: [0.22, 1, 0.36, 1] }}
+        onClick={(e) => e.stopPropagation()}
+        className="bg-paper w-full max-w-lg max-h-[92vh] overflow-y-auto relative"
+      >
+        <div className="absolute top-0 left-0 right-0 h-[3px] bg-red" />
+        <div className="p-8">
+          {status === "sent" ? (
+            <div>
+              <div className="flex items-center gap-3 text-[11px] uppercase tracking-[0.25em] text-muted-foreground mb-6">
+                <span className="h-px w-8 bg-red" /><span>Sent</span>
+              </div>
+              <p className="font-display text-2xl tracking-[-0.01em] mb-2">Message delivered.</p>
+              <p className="text-sm text-muted-foreground mb-6">Your message was sent to {row.email}.</p>
+              <button onClick={onClose} className="border border-ink px-5 py-2.5 text-[10px] uppercase tracking-[0.25em] hover:bg-ink hover:text-white transition-colors">Close</button>
+            </div>
+          ) : (
+            <form onSubmit={send} className="space-y-5">
+              <div>
+                <div className="flex items-center gap-3 text-[11px] uppercase tracking-[0.25em] text-muted-foreground mb-4">
+                  <span className="h-px w-8 bg-red" /><span>Message Attendee</span>
+                </div>
+                <button type="button" onClick={onClose} className="absolute top-5 right-6 text-[11px] uppercase tracking-[0.3em] text-muted-foreground hover:text-red transition-colors">Close</button>
+                <p className="font-display text-xl tracking-[-0.01em]">{row.full_name}</p>
+                <p className="text-[11px] text-muted-foreground mt-0.5">{row.email}</p>
+              </div>
+              <label className="block">
+                <span className="block text-[10px] uppercase tracking-[0.3em] text-muted-foreground mb-2">Subject</span>
+                <input required value={subject} onChange={(e) => setSubject(e.target.value)}
+                  className="w-full bg-transparent border-b border-ink/25 py-2.5 focus:outline-none focus:border-red text-sm" />
+              </label>
+              <label className="block">
+                <span className="block text-[10px] uppercase tracking-[0.3em] text-muted-foreground mb-2">Message</span>
+                <textarea required rows={6} value={body} onChange={(e) => setBody(e.target.value)}
+                  placeholder="Type your message here…"
+                  className="w-full bg-transparent border border-ink/15 p-3 focus:outline-none focus:border-red text-sm resize-none" />
+              </label>
+              {status === "error" && <p className="text-[11px] text-red">{errorMsg}</p>}
+              <div className="flex gap-3">
+                <button type="submit" disabled={status === "sending"}
+                  className="flex-1 bg-red text-white py-3 text-[10px] uppercase tracking-[0.3em] hover:bg-ink transition-colors disabled:opacity-60">
+                  {status === "sending" ? "Sending…" : "Send Message →"}
+                </button>
+                <button type="button" onClick={onClose}
+                  className="border border-ink px-5 text-[10px] uppercase tracking-[0.3em] hover:bg-ink hover:text-white transition-colors">
+                  Cancel
+                </button>
+              </div>
+            </form>
+          )}
+        </div>
+      </motion.div>
+    </div>
+  );
+}
+
 function TicketsTab() {
   const { rows: allRows, refresh } = useRows<TicketRow>("ticket_orders");
   const rows = allRows ? allRows.filter((r) => r.tier === "regular" || r.tier === "standard" || r.tier === "vip") : null;
+  const [search, setSearch] = useState("");
+  const [msgTarget, setMsgTarget] = useState<TicketRow | null>(null);
+
+  const filtered = rows
+    ? rows.filter((r) => {
+        const q = search.toLowerCase();
+        return !q || r.full_name.toLowerCase().includes(q) || r.email.toLowerCase().includes(q);
+      })
+    : null;
 
   const updateStatus = async (id: string, payment_status: string) => {
     await supabase
@@ -564,17 +723,35 @@ function TicketsTab() {
     );
   }, [rows]);
 
-  if (!rows) return <Loader />;
+  if (!filtered) return <Loader />;
 
   return (
     <div>
       <SectionHeader
         title="Tickets"
-        count={rows.length}
-        onExport={rows.length > 0 ? handleExport : undefined}
+        count={filtered.length}
+        onExport={rows && rows.length > 0 ? handleExport : undefined}
       />
-      {rows.length === 0 ? (
-        <EmptyState label="ticket orders" />
+
+      {/* Search */}
+      <div className="mb-5 relative">
+        <svg className="absolute left-3.5 top-1/2 -translate-y-1/2 text-muted-foreground" width="13" height="13" viewBox="0 0 13 13" fill="none">
+          <circle cx="5.5" cy="5.5" r="4.5" stroke="currentColor" strokeWidth="1.2"/>
+          <path d="M9 9l2.5 2.5" stroke="currentColor" strokeWidth="1.2" strokeLinecap="round"/>
+        </svg>
+        <input
+          value={search}
+          onChange={(e) => setSearch(e.target.value)}
+          placeholder="Search by name or email…"
+          className="w-full border border-border pl-9 pr-4 py-2.5 text-sm focus:outline-none focus:border-ink bg-paper placeholder:text-muted-foreground"
+        />
+        {search && (
+          <button onClick={() => setSearch("")} className="absolute right-3.5 top-1/2 -translate-y-1/2 text-muted-foreground hover:text-ink text-lg leading-none">×</button>
+        )}
+      </div>
+
+      {filtered.length === 0 ? (
+        <EmptyState label={search ? `results for "${search}"` : "ticket orders"} />
       ) : (
         <div className="border border-border overflow-x-auto">
           <table className="w-full">
@@ -586,11 +763,11 @@ function TicketsTab() {
                 <Th>Amount</Th>
                 <Th>Status</Th>
                 <Th>Date</Th>
-                <Th>Action</Th>
+                <Th>Actions</Th>
               </tr>
             </thead>
             <tbody>
-              {rows.map((r, i) => (
+              {filtered.map((r, i) => (
                 <motion.tr
                   key={r.id}
                   initial={{ opacity: 0 }}
@@ -615,43 +792,46 @@ function TicketsTab() {
                     )}
                   </Td>
                   <Td>
-                    <span className="text-[10px] uppercase tracking-[0.2em] font-medium">
-                      {r.tier}
-                    </span>
+                    <span className="text-[10px] uppercase tracking-[0.2em] font-medium">{r.tier}</span>
                     {r.quantity > 1 && (
-                      <span className="ml-1.5 text-[10px] text-muted-foreground">
-                        × {r.quantity}
-                      </span>
+                      <span className="ml-1.5 text-[10px] text-muted-foreground">× {r.quantity}</span>
                     )}
                   </Td>
                   <Td>
-                    <span className="font-display text-sm">
-                      ₦{(r.amount_naira * r.quantity).toLocaleString()}
-                    </span>
+                    <span className="font-display text-sm">₦{(r.amount_naira * r.quantity).toLocaleString()}</span>
                   </Td>
                   <Td>
                     <StatusPill status={r.payment_status} />
                   </Td>
                   <Td className="text-[11px] text-muted-foreground whitespace-nowrap">
-                    {new Date(r.created_at).toLocaleDateString("en-NG", {
-                      day: "numeric",
-                      month: "short",
-                      year: "numeric",
-                    })}
+                    {new Date(r.created_at).toLocaleDateString("en-NG", { day: "numeric", month: "short", year: "numeric" })}
                   </Td>
                   <Td>
-                    {r.payment_status === "paid" ? (
+                    <div className="flex flex-col gap-2">
                       <div className="flex items-center gap-2">
-                        <StatusPill status="paid" />
-                        <span className="text-[9px] uppercase tracking-[0.15em] text-muted-foreground">auto</span>
+                        <button
+                          onClick={() => viewTicketAdmin(r)}
+                          className="flex items-center gap-1.5 border border-border px-2.5 py-1.5 text-[9px] uppercase tracking-[0.2em] hover:border-ink hover:text-ink transition-colors whitespace-nowrap"
+                        >
+                          <svg width="10" height="10" viewBox="0 0 10 10" fill="none"><rect x="1" y="1" width="8" height="8" rx="0.5" stroke="currentColor" strokeWidth="1.1"/><path d="M3 3.5h4M3 5h4M3 6.5h2.5" stroke="currentColor" strokeWidth="1.1" strokeLinecap="round"/></svg>
+                          View Ticket
+                        </button>
+                        <button
+                          onClick={() => setMsgTarget(r)}
+                          className="flex items-center gap-1.5 border border-border px-2.5 py-1.5 text-[9px] uppercase tracking-[0.2em] hover:border-red hover:text-red transition-colors whitespace-nowrap"
+                        >
+                          <svg width="10" height="10" viewBox="0 0 10 10" fill="none"><rect x="1" y="2" width="8" height="6" rx="0.5" stroke="currentColor" strokeWidth="1.1"/><path d="M1.5 2.5l3.5 3 3.5-3" stroke="currentColor" strokeWidth="1.1" strokeLinecap="round" strokeLinejoin="round"/></svg>
+                          Message
+                        </button>
                       </div>
-                    ) : (
-                      <InlineSelect
-                        value={r.payment_status}
-                        options={["failed", "refunded"]}
-                        onChange={(v) => updateStatus(r.id, v)}
-                      />
-                    )}
+                      {r.payment_status !== "paid" && (
+                        <InlineSelect
+                          value={r.payment_status}
+                          options={["failed", "refunded"]}
+                          onChange={(v) => updateStatus(r.id, v)}
+                        />
+                      )}
+                    </div>
                   </Td>
                 </motion.tr>
               ))}
@@ -659,6 +839,8 @@ function TicketsTab() {
           </table>
         </div>
       )}
+
+      {msgTarget && <MessageModal row={msgTarget} onClose={() => setMsgTarget(null)} />}
     </div>
   );
 }
