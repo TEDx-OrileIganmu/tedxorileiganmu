@@ -249,8 +249,8 @@ function HeroSection() {
         transition={{ duration: 0.6, ease, delay: 0.1 }}
         className="mx-auto max-w-7xl w-full px-6 md:px-10 pt-20 md:pt-28"
       >
-        <div className="flex items-center gap-3 text-[11px] uppercase tracking-[0.3em] text-white/40">
-          <span className="h-px w-8 bg-red" />
+        <div className="flex items-center gap-3 text-[11px] uppercase tracking-[0.15em] md:tracking-[0.3em] text-white/40">
+          <span className="h-px w-8 bg-red shrink-0" />
           <span>Volunteer · TEDxOrileIganmu 2027</span>
         </div>
       </motion.div>
@@ -323,7 +323,7 @@ function HeroSection() {
         transition={{ duration: 0.6, delay: 1.1 }}
         className="mx-auto max-w-7xl w-full px-6 md:px-10 pb-10 md:pb-12"
       >
-        <p className="text-[10px] uppercase tracking-[0.3em] text-white/25">
+        <p className="text-[10px] uppercase tracking-[0.15em] md:tracking-[0.25em] text-white/25 leading-relaxed">
           6 March 2027 · The Stable by Union Bank · Surulere, Lagos
         </p>
       </motion.div>
@@ -908,10 +908,10 @@ function SuccessState() {
         Thank you for wanting to help shape this. We will review your application and reach out before February 2027.
       </p>
 
-      <div className="flex items-center gap-3 justify-center text-[11px] uppercase tracking-[0.25em] text-muted-foreground">
-        <span className="h-px w-8 bg-red" />
+      <div className="flex items-center gap-3 justify-center text-[11px] uppercase tracking-[0.15em] md:tracking-[0.25em] text-muted-foreground">
+        <span className="h-px w-8 bg-red shrink-0" />
         <span>TEDxOrileIganmu · 6 March 2027</span>
-        <span className="h-px w-8 bg-red" />
+        <span className="h-px w-8 bg-red shrink-0" />
       </div>
     </motion.div>
   );

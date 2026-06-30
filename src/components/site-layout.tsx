@@ -104,8 +104,8 @@ function SiteFooter() {
   return (
     <footer className="bg-ink text-white border-t border-white/10 mt-20">
       <div className="mx-auto max-w-7xl px-6 md:px-10 py-16 md:py-20">
-        <div className="grid gap-12 md:grid-cols-[1.6fr_1fr_1fr_1fr]">
-          <div>
+        <div className="grid gap-10 grid-cols-2 md:grid-cols-[1.6fr_1fr_1fr_1fr]">
+          <div className="col-span-2 md:col-span-1">
             <img src={logoWhite.url} alt="TEDxOrileIganmu" className="h-7 w-auto" />
             <p className="mt-6 font-serif italic text-white/50 max-w-xs leading-relaxed text-sm">
               Ideas worth spreading. From Orile, to the world.
@@ -139,7 +139,7 @@ function SiteFooter() {
             </ul>
           </div>
         </div>
-        <div className="mt-16 pt-8 border-t border-white/10 flex flex-wrap items-center justify-between gap-4 text-[10px] uppercase tracking-[0.25em] text-white/30">
+        <div className="mt-16 pt-8 border-t border-white/10 flex flex-col sm:flex-row items-start sm:items-center justify-between gap-2 sm:gap-4 text-[10px] uppercase tracking-[0.2em] text-white/30">
           <p>© 2027 TEDxOrileIganmu</p>
           <p>Independently operated under license from TED.</p>
         </div>

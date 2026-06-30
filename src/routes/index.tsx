@@ -33,9 +33,9 @@ function HomePage() {
             initial={{ opacity: 0, y: 8 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.5, ease }}
-            className="flex items-center gap-3 text-[10px] uppercase tracking-[0.3em] text-red mb-10"
+            className="flex items-center gap-3 text-[10px] uppercase tracking-[0.15em] md:tracking-[0.3em] text-red mb-10"
           >
-            <span className="h-px w-8 bg-red" />
+            <span className="h-px w-8 bg-red shrink-0" />
             <span>Independently organised · TED licensed</span>
           </motion.div>
 
@@ -87,14 +87,14 @@ function HomePage() {
         {/* Stats strip */}
         <div className="border-y border-border bg-ink text-white">
           <div className="mx-auto max-w-7xl px-6 md:px-10">
-            <div className="grid grid-cols-2 md:grid-cols-4 divide-x divide-white/10">
+            <div className="grid grid-cols-2 md:grid-cols-4 gap-px bg-white/10">
               {STATS.map((s, i) => (
                 <motion.div
                   key={s.label}
                   initial={{ opacity: 0, y: 12 }}
                   animate={{ opacity: 1, y: 0 }}
                   transition={{ duration: 0.5, ease, delay: 0.7 + i * 0.06 }}
-                  className="px-6 md:px-10 py-8 md:py-10"
+                  className="bg-ink px-5 md:px-10 py-7 md:py-10"
                 >
                   <p className="font-display font-medium text-3xl md:text-5xl tracking-[-0.03em] text-white">{s.value}</p>
                   <p className="mt-1 text-[10px] uppercase tracking-[0.3em] text-white/40">{s.label}</p>
@@ -140,7 +140,7 @@ function HomePage() {
                 viewport={{ once: true, margin: "-80px" }}
                 transition={{ duration: 0.6, ease, delay: i * 0.1 }}
               >
-                <Link to={c.to} className="group block bg-ink p-10 md:p-12 h-full">
+                <Link to={c.to} className="group block bg-ink p-6 sm:p-8 md:p-10 lg:p-12 h-full">
                   <p className="text-[10px] uppercase tracking-[0.3em] text-white/30 mb-8">{c.n}</p>
                   <h2 className="font-display text-2xl md:text-3xl tracking-[-0.02em] font-medium group-hover:text-red transition-colors duration-300">{c.t}</h2>
                   <p className="mt-4 text-sm text-white/50 leading-relaxed">{c.d}</p>
@@ -182,9 +182,9 @@ function HomePage() {
       {/* Volunteer CTA */}
       <section className="bg-red text-white">
         <div className="mx-auto max-w-7xl px-6 md:px-10 py-20 md:py-28">
-          <div className="grid gap-10 md:grid-cols-[1fr_auto] items-center">
+          <div className="grid gap-8 md:gap-10 grid-cols-1 md:grid-cols-[1fr_auto] items-center">
             <div>
-              <p className="text-[10px] uppercase tracking-[0.3em] text-white/60 mb-4">Join the crew</p>
+              <p className="text-[10px] uppercase tracking-[0.2em] md:tracking-[0.3em] text-white/60 mb-4">Join the crew</p>
               <h2 className="font-display font-medium text-[clamp(2rem,5vw,4rem)] tracking-[-0.02em] leading-[1.05]">
                 Help us build the room.
               </h2>
@@ -194,7 +194,7 @@ function HomePage() {
             </div>
             <Link
               to="/volunteer"
-              className="group relative inline-flex items-center justify-center bg-white text-red px-10 py-5 text-xs uppercase tracking-[0.25em] overflow-hidden shrink-0"
+              className="group relative inline-flex items-center justify-center bg-white text-red px-10 py-5 text-xs uppercase tracking-[0.2em] md:tracking-[0.25em] overflow-hidden w-full md:w-auto shrink-0"
             >
               <span className="absolute inset-0 bg-ink translate-y-full group-hover:translate-y-0 transition-transform duration-500 ease-[cubic-bezier(0.22,1,0.36,1)]" />
               <span className="relative group-hover:text-white transition-colors duration-300">Apply to Volunteer →</span>

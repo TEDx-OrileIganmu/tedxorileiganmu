@@ -187,7 +187,7 @@ function PaymentCallback({ reference }: { reference: string }) {
           <span className="font-serif italic font-normal">in the room.</span>
         </motion.h1>
         <p className="mt-8 font-serif italic text-xl md:text-2xl text-ink/70 max-w-xl leading-snug">
-          Your ticket is confirmed. Check your email for details and entry instructions. We'll see you in October.
+          Your ticket is confirmed. Check your email for details and entry instructions. We'll see you on 6 March 2027.
         </p>
         <div className="mt-10 border border-border p-4 bg-muted inline-block">
           <p className="text-[10px] uppercase tracking-[0.3em] text-muted-foreground mb-1">Reference</p>
