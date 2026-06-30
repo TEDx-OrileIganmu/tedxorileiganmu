@@ -1,8 +1,36 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
-import { useState, type ReactNode } from "react";
+import { useState, useRef, useEffect, type ReactNode } from "react";
 import { motion } from "framer-motion";
 import { SiteLayout, SectionHeader } from "@/components/site-layout";
 import { supabase } from "@/integrations/supabase/client";
+import { verifyPayment } from "@/lib/paystack";
+
+declare global {
+  interface Window {
+    PaystackPop: {
+      setup(opts: {
+        key: string; email: string; amount: number; ref: string;
+        metadata?: object;
+        callback: (r: { reference: string }) => void;
+        onClose: () => void;
+      }): { openIframe(): void };
+    };
+  }
+}
+
+function loadPaystackScript(): Promise<void> {
+  return new Promise((resolve, reject) => {
+    if (typeof window !== "undefined" && window.PaystackPop) { resolve(); return; }
+    const existing = document.querySelector('script[src*="paystack"]');
+    if (existing) { existing.addEventListener("load", () => resolve()); return; }
+    const s = document.createElement("script");
+    s.src = "https://js.paystack.co/v1/inline.js";
+    s.async = true;
+    s.onload = () => resolve();
+    s.onerror = () => reject(new Error("Failed to load payment system"));
+    document.head.appendChild(s);
+  });
+}
 
 export const Route = createFileRoute("/support")({
   head: () => ({
@@ -97,7 +125,7 @@ function SupportPage() {
               </p>
               <div className="space-y-3 text-sm text-white/80">
                 <p className="text-[10px] uppercase tracking-[0.3em] text-white/40 mb-3">How to give</p>
-                <p className="text-white/60 leading-relaxed">Fill out the form, submit your pledge, and we'll send you a secure Paystack payment link by email within 24 hours.</p>
+                <p className="text-white/60 leading-relaxed">Fill out the form and pay securely via Paystack. A payment popup opens right here, no redirect needed.</p>
               </div>
             </motion.div>
             <DonateForm />
@@ -190,40 +218,103 @@ function PartnerForm() {
 }
 
 /* ---- Donate ---- */
+type DonateFlow = "idle" | "saving" | "awaiting" | "verifying" | "success" | "cancelled" | "error";
+
 function DonateForm() {
-  const TIERS = [
+  const DONATION_TIERS = [
     { amount: 5000, label: "Supporter", desc: "One subsidised attendee seat" },
     { amount: 15000, label: "Contributor", desc: "A speaker's local travel" },
     { amount: 50000, label: "Patron", desc: "Stage design for a session" },
   ];
-  const [state, setState] = useState<"idle" | "submitting" | "done" | "error">("idle");
+  const [flow, setFlow] = useState<DonateFlow>("idle");
   const [errorMsg, setErrorMsg] = useState("");
   const [form, setForm] = useState({ donor_name: "", email: "", phone: "", amount: 5000, tier: "Supporter", message: "" });
+  const [donationRef, setDonationRef] = useState("");
+  const paymentDoneRef = useRef(false);
+
+  useEffect(() => { loadPaystackScript().catch(() => {}); }, []);
 
   const submit = async (e: React.FormEvent) => {
     e.preventDefault();
-    setState("submitting");
+    setFlow("saving");
     const ref = `TXOI-DON-${Date.now().toString(36).toUpperCase()}`;
     const { error } = await supabase.from("donations").insert({
       donor_name: form.donor_name, email: form.email, phone: form.phone || null,
       amount_naira: form.amount, tier: form.tier, message: form.message || null,
       payment_reference: ref, payment_status: "pending",
     });
-    if (error) { setErrorMsg(error.message); setState("error"); return; }
-    setState("done");
+    if (error) { setErrorMsg(error.message); setFlow("error"); return; }
+    setDonationRef(ref);
+    paymentDoneRef.current = false;
+    setFlow("awaiting");
+
+    try {
+      await loadPaystackScript();
+    } catch {
+      setErrorMsg("Could not load payment system. Please refresh and try again.");
+      setFlow("error");
+      return;
+    }
+
+    const key = import.meta.env.VITE_PAYSTACK_PUBLIC_KEY as string;
+    window.PaystackPop.setup({
+      key,
+      email: form.email,
+      amount: form.amount * 100,
+      ref,
+      metadata: { donor_name: form.donor_name, tier: form.tier },
+      callback: async (response) => {
+        paymentDoneRef.current = true;
+        setFlow("verifying");
+        try {
+          const result = await verifyPayment({ data: { reference: response.reference } });
+          if (result.status === "success") {
+            await supabase.from("donations").update({ payment_status: "paid" }).eq("payment_reference", response.reference);
+            setFlow("success");
+          } else {
+            setErrorMsg("Payment not completed. Please try again.");
+            setFlow("error");
+          }
+        } catch {
+          setErrorMsg("Verification failed. Contact us with your reference: " + response.reference);
+          setFlow("error");
+        }
+      },
+      onClose: () => {
+        if (!paymentDoneRef.current) setFlow("cancelled");
+      },
+    }).openIframe();
   };
 
-  if (state === "done") return (
+  if (flow === "success") return (
     <div className="border border-white/15 p-10 bg-white/5">
-      <p className="font-serif italic text-2xl text-white">Thank you, {form.donor_name}.</p>
-      <p className="mt-3 text-white/60 text-sm">We will send a Paystack payment link to your email within 24 hours. Every gift is acknowledged personally.</p>
+      <p className="font-serif italic text-2xl text-white mb-3">Thank you, {form.donor_name}.</p>
+      <p className="text-white/60 text-sm leading-relaxed">Your donation of ₦{form.amount.toLocaleString()} has been confirmed. Every gift keeps the room alive.</p>
+      <p className="mt-4 text-[10px] uppercase tracking-[0.2em] text-white/30 font-mono">{donationRef}</p>
     </div>
   );
+
+  if (flow === "cancelled") return (
+    <div className="border border-white/15 p-10 bg-white/5">
+      <p className="font-display text-xl text-white mb-3">Payment window closed.</p>
+      <p className="text-white/60 text-sm mb-6">No charge was made. You can try again when you're ready.</p>
+      <button onClick={() => setFlow("idle")} className="text-xs uppercase tracking-[0.2em] border-b border-red pb-1 text-white hover:text-red transition-colors">
+        Try again →
+      </button>
+    </div>
+  );
+
+  const busy = flow === "saving" || flow === "awaiting" || flow === "verifying";
+  const btnLabel =
+    flow === "saving" ? "Recording…" :
+    flow === "awaiting" ? "Opening payment…" :
+    flow === "verifying" ? "Verifying…" :
+    `Donate ₦${form.amount.toLocaleString()} →`;
 
   return (
     <form onSubmit={submit} className="space-y-5">
       <div className="grid grid-cols-3 gap-2">
-        {TIERS.map((t) => (
+        {DONATION_TIERS.map((t) => (
           <button type="button" key={t.amount}
             onClick={() => setForm({ ...form, amount: t.amount, tier: t.label })}
             className={`p-4 text-left border transition-colors ${form.amount === t.amount ? "border-red bg-white/10" : "border-white/15 hover:border-white/40"}`}>
@@ -246,10 +337,10 @@ function DonateForm() {
         className="w-full bg-transparent border-b border-white/25 py-3 focus:outline-none focus:border-red text-lg text-white" /></DarkField>
       <DarkField label="Message (optional)"><textarea rows={2} value={form.message} onChange={(e) => setForm({ ...form, message: e.target.value })}
         className="w-full bg-transparent border-b border-white/25 py-3 focus:outline-none focus:border-red text-base text-white resize-none" /></DarkField>
-      {state === "error" && <p className="text-sm text-red">{errorMsg}</p>}
-      <button type="submit" disabled={state === "submitting"}
+      {flow === "error" && <p className="text-sm text-red">{errorMsg}</p>}
+      <button type="submit" disabled={busy}
         className="w-full bg-red text-white py-5 text-xs uppercase tracking-[0.3em] hover:bg-white hover:text-ink transition-colors disabled:opacity-50">
-        {state === "submitting" ? "Recording…" : `Pledge ₦${form.amount.toLocaleString()} →`}
+        {btnLabel}
       </button>
     </form>
   );

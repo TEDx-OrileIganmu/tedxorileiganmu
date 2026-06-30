@@ -394,11 +394,10 @@ function Overview() {
   useEffect(() => {
     (async () => {
       const [ticketData, v, p, donationData] = await Promise.all([
-        // Only count the tiers we actually sell (regular + vip)
         (supabase as any)
           .from("ticket_orders")
           .select("payment_status, amount_naira, tier")
-          .in("tier", ["regular", "vip"]),
+          .in("tier", ["regular", "standard", "vip"]),
         supabase.from("volunteer_applications").select("id", { count: "exact", head: true }),
         supabase.from("partner_inquiries").select("id", { count: "exact", head: true }),
         supabase.from("donations").select("amount_naira").eq("payment_status", "paid"),
@@ -546,7 +545,7 @@ const TICKET_STATUSES = ["pending", "paid", "failed", "refunded"];
 
 function TicketsTab() {
   const { rows: allRows, refresh } = useRows<TicketRow>("ticket_orders");
-  const rows = allRows ? allRows.filter((r) => r.tier === "regular" || r.tier === "vip") : null;
+  const rows = allRows ? allRows.filter((r) => r.tier === "regular" || r.tier === "standard" || r.tier === "vip") : null;
 
   const updateStatus = async (id: string, payment_status: string) => {
     await supabase

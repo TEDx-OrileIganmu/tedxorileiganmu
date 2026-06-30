@@ -69,15 +69,25 @@ const TIERS: Tier[] = [
       { label: "Full-day access", included: true },
       { label: "All talks & sessions", included: true },
       { label: "Open-floor seating", included: true },
+      { label: "Printed programme", included: true },
+      { label: "Speaker reception", included: false },
+      { label: "Reserved seating", included: false },
+    ],
+  },
+  {
+    id: "standard", name: "Standard", price: 5000, tag: "Reserved Seating", featured: true,
+    perks: [
+      { label: "Everything in Regular", included: true },
+      { label: "Reserved mid-room seat", included: true },
       { label: "Light refreshments", included: true },
       { label: "Printed programme", included: true },
       { label: "Speaker reception", included: false },
     ],
   },
   {
-    id: "vip", name: "VIP", price: 25000, tag: "Front Row & Reception", featured: true,
+    id: "vip", name: "VIP", price: 25000, tag: "Front Row & Reception",
     perks: [
-      { label: "Everything in Regular", included: true },
+      { label: "Everything in Standard", included: true },
       { label: "Front-row reserved seat", included: true },
       { label: "Full lunch & dinner", included: true },
       { label: "Speaker & curator reception", included: true },
@@ -105,7 +115,7 @@ function TicketsPage() {
       />
 
       <section className="mx-auto max-w-7xl px-6 md:px-10 pb-24 md:pb-32">
-        <div className="grid gap-6 md:gap-8 md:grid-cols-2 max-w-3xl mx-auto">
+        <div className="grid gap-6 md:gap-8 md:grid-cols-3 max-w-5xl mx-auto">
           {TIERS.map((t, i) => (
             <motion.article
               key={t.id}
@@ -152,9 +162,6 @@ function TicketsPage() {
 
         <p className="mt-10 text-xs uppercase tracking-[0.25em] text-muted-foreground text-center">
           Limited to 100 seats · One day only · No re-entry without badge
-        </p>
-        <p className="mt-3 text-[10px] uppercase tracking-[0.2em] text-muted-foreground/60 text-center">
-          Standard tier opening soon
         </p>
       </section>
 
