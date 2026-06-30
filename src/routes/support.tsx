@@ -18,17 +18,17 @@ declare global {
   }
 }
 
-function loadPaystackScript(): Promise<void> {
+function ensurePaystackScript(): Promise<void> {
   return new Promise((resolve, reject) => {
-    if (typeof window !== "undefined" && window.PaystackPop) { resolve(); return; }
-    const existing = document.querySelector('script[src*="paystack"]');
-    if (existing) { existing.addEventListener("load", () => resolve()); return; }
-    const s = document.createElement("script");
-    s.src = "https://js.paystack.co/v1/inline.js";
-    s.async = true;
-    s.onload = () => resolve();
-    s.onerror = () => reject(new Error("Failed to load payment system"));
-    document.head.appendChild(s);
+    if (window.PaystackPop) { resolve(); return; }
+    let s = document.querySelector<HTMLScriptElement>('script[src="https://js.paystack.co/v1/inline.js"]');
+    if (!s) {
+      s = document.createElement("script");
+      s.src = "https://js.paystack.co/v1/inline.js";
+      document.head.appendChild(s);
+    }
+    s.addEventListener("load", () => resolve(), { once: true });
+    s.addEventListener("error", () => reject(new Error("Paystack script failed to load")), { once: true });
   });
 }
 
@@ -232,58 +232,55 @@ function DonateForm() {
   const [donationRef, setDonationRef] = useState("");
   const paymentDoneRef = useRef(false);
 
-  useEffect(() => { loadPaystackScript().catch(() => {}); }, []);
+  useEffect(() => { ensurePaystackScript().catch(() => {}); }, []);
 
-  const submit = async (e: React.FormEvent) => {
+  const submit = (e: React.FormEvent) => {
     e.preventDefault();
-
-    if (!window.PaystackPop) {
-      setFlow("saving");
-      try {
-        await loadPaystackScript();
-      } catch {
-        setErrorMsg("Could not load payment system. Please refresh and try again.");
-        setFlow("error");
-        return;
-      }
-    }
-
     const ref = `TXOI-DON-${Date.now().toString(36).toUpperCase()}`;
     paymentDoneRef.current = false;
-    setFlow("awaiting");
+    setFlow("saving");
 
-    window.PaystackPop.setup({
-      key: import.meta.env.VITE_PAYSTACK_PUBLIC_KEY as string,
-      email: form.email,
-      amount: form.amount * 100,
-      ref,
-      metadata: { donor_name: form.donor_name, tier: form.tier },
-      callback: async (response) => {
-        paymentDoneRef.current = true;
-        setFlow("verifying");
-        try {
-          const result = await verifyPayment({ data: { reference: response.reference } });
-          if (result.status === "success") {
-            const { error } = await supabase.from("donations").insert({
-              donor_name: form.donor_name, email: form.email, phone: form.phone || null,
-              amount_naira: form.amount, tier: form.tier, message: form.message || null,
-              payment_reference: response.reference, payment_status: "paid",
-            });
-            if (!error) setDonationRef(response.reference);
-            setFlow("success");
-          } else {
-            setErrorMsg("Payment not completed. Please try again.");
+    const openPopup = () => {
+      window.PaystackPop.setup({
+        key: import.meta.env.VITE_PAYSTACK_PUBLIC_KEY as string,
+        email: form.email,
+        amount: form.amount * 100,
+        ref,
+        metadata: { donor_name: form.donor_name, tier: form.tier },
+        callback: async (response) => {
+          paymentDoneRef.current = true;
+          setFlow("verifying");
+          try {
+            const result = await verifyPayment({ data: { reference: response.reference } });
+            if (result.status === "success") {
+              const { error } = await supabase.from("donations").insert({
+                donor_name: form.donor_name, email: form.email, phone: form.phone || null,
+                amount_naira: form.amount, tier: form.tier, message: form.message || null,
+                payment_reference: response.reference, payment_status: "paid",
+              });
+              if (!error) setDonationRef(response.reference);
+              setFlow("success");
+            } else {
+              setErrorMsg("Payment not completed. Please try again.");
+              setFlow("error");
+            }
+          } catch {
+            setErrorMsg("Verification failed. Contact us with reference: " + response.reference);
             setFlow("error");
           }
-        } catch {
-          setErrorMsg("Verification failed. Contact us with your reference: " + response.reference);
-          setFlow("error");
-        }
-      },
-      onClose: () => {
-        if (!paymentDoneRef.current) setFlow("cancelled");
-      },
-    }).openIframe();
+        },
+        onClose: () => { if (!paymentDoneRef.current) setFlow("cancelled"); },
+      }).openIframe();
+    };
+
+    if (window.PaystackPop) { openPopup(); return; }
+
+    ensurePaystackScript()
+      .then(openPopup)
+      .catch(() => {
+        setErrorMsg("Could not load payment system. Please refresh and try again.");
+        setFlow("error");
+      });
   };
 
   if (flow === "success") return (
@@ -306,8 +303,7 @@ function DonateForm() {
 
   const busy = flow === "saving" || flow === "awaiting" || flow === "verifying";
   const btnLabel =
-    flow === "saving" ? "Recording…" :
-    flow === "awaiting" ? "Opening payment…" :
+    flow === "saving" ? "Opening Paystack…" :
     flow === "verifying" ? "Verifying…" :
     `Donate ₦${form.amount.toLocaleString()} →`;
 

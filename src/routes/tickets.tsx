@@ -33,23 +33,18 @@ declare global {
   }
 }
 
-function loadPaystackScript(): Promise<void> {
+function ensurePaystackScript(): Promise<void> {
   return new Promise((resolve, reject) => {
-    if (typeof window !== "undefined" && window.PaystackPop) {
-      resolve();
-      return;
+    if (window.PaystackPop) { resolve(); return; }
+    // Re-use existing tag if it's still loading; otherwise inject fresh
+    let s = document.querySelector<HTMLScriptElement>('script[src="https://js.paystack.co/v1/inline.js"]');
+    if (!s) {
+      s = document.createElement("script");
+      s.src = "https://js.paystack.co/v1/inline.js";
+      document.head.appendChild(s);
     }
-    const existing = document.querySelector('script[src*="paystack"]');
-    if (existing) {
-      existing.addEventListener("load", () => resolve());
-      return;
-    }
-    const s = document.createElement("script");
-    s.src = "https://js.paystack.co/v1/inline.js";
-    s.async = true;
-    s.onload = () => resolve();
-    s.onerror = () => reject(new Error("Failed to load payment system"));
-    document.head.appendChild(s);
+    s.addEventListener("load", () => resolve(), { once: true });
+    s.addEventListener("error", () => reject(new Error("Paystack script failed to load")), { once: true });
   });
 }
 
@@ -101,10 +96,7 @@ const ease = [0.22, 1, 0.36, 1] as const;
 function TicketsPage() {
   const [selected, setSelected] = useState<Tier | null>(null);
 
-  // Preload Paystack script as soon as the page renders for faster popup
-  useEffect(() => {
-    loadPaystackScript().catch(() => {});
-  }, []);
+  useEffect(() => { ensurePaystackScript().catch(() => {}); }, []);
 
   return (
     <SiteLayout>
@@ -192,108 +184,97 @@ function TicketDialog({ tier, onClose }: { tier: Tier; onClose: () => void }) {
   const [successData, setSuccessData] = useState<SuccessData | null>(null);
   const paymentDoneRef = useRef(false);
 
-  const submit = async (e: React.FormEvent) => {
+  const submit = (e: React.FormEvent) => {
     e.preventDefault();
-
-    if (!window.PaystackPop) {
-      setFlowState("saving");
-      try {
-        await loadPaystackScript();
-      } catch {
-        setErrorMsg("Could not load payment system. Check your connection and try again.");
-        setFlowState("error");
-        return;
-      }
-    }
 
     const ref = `TXOI-${tier.id.toUpperCase()}-${Date.now().toString(36).toUpperCase()}`;
     paymentDoneRef.current = false;
-    setFlowState("awaiting");
+    setFlowState("saving"); // disables the button while Paystack iframe loads
 
-    window.PaystackPop.setup({
-      key: import.meta.env.VITE_PAYSTACK_PUBLIC_KEY as string,
-      email: form.email,
-      amount: tier.price * form.quantity * 100,
-      ref,
-      metadata: {
-        custom_fields: [
-          { display_name: "Full Name", variable_name: "full_name", value: form.full_name },
-          { display_name: "Ticket Tier", variable_name: "ticket_tier", value: tier.name },
-        ],
-      },
-      callback: async (response: { reference: string }) => {
-        paymentDoneRef.current = true;
-        setFlowState("verifying");
-        try {
-          const result = await verifyPayment({ data: { reference: response.reference } });
-          if (result.status === "success") {
-            await supabase.from("ticket_orders").insert({
-              full_name: form.full_name,
-              email: form.email,
-              phone: form.phone || null,
-              tier: tier.id,
-              amount_naira: tier.price * form.quantity,
-              quantity: form.quantity,
-              payment_reference: response.reference,
-              payment_status: "paid",
-            });
-
-            const sd: SuccessData = {
-              name: form.full_name,
-              email: form.email,
-              tier: tier.name,
-              reference: response.reference,
-              amount: tier.price * form.quantity,
-              quantity: form.quantity,
-            };
-            setSuccessData(sd);
-            setFlowState("success");
-
-            sendTicketEmail({
-              data: {
-                to: form.email,
-                name: form.full_name,
-                tier: tier.name,
-                reference: response.reference,
-                amount: tier.price * form.quantity,
+    const openPopup = () => {
+      window.PaystackPop.setup({
+        key: import.meta.env.VITE_PAYSTACK_PUBLIC_KEY as string,
+        email: form.email,
+        amount: tier.price * form.quantity * 100,
+        ref,
+        metadata: {
+          custom_fields: [
+            { display_name: "Full Name", variable_name: "full_name", value: form.full_name },
+            { display_name: "Ticket Tier", variable_name: "ticket_tier", value: tier.name },
+          ],
+        },
+        callback: async (response: { reference: string }) => {
+          paymentDoneRef.current = true;
+          setFlowState("verifying");
+          try {
+            const result = await verifyPayment({ data: { reference: response.reference } });
+            if (result.status === "success") {
+              await supabase.from("ticket_orders").insert({
+                full_name: form.full_name,
+                email: form.email,
+                phone: form.phone || null,
+                tier: tier.id,
+                amount_naira: tier.price * form.quantity,
                 quantity: form.quantity,
-              },
-            }).catch(() => {});
-          } else {
-            setErrorMsg("Your payment was not completed. No charge was made.");
+                payment_reference: response.reference,
+                payment_status: "paid",
+              });
+              const sd: SuccessData = {
+                name: form.full_name, email: form.email, tier: tier.name,
+                reference: response.reference, amount: tier.price * form.quantity,
+                quantity: form.quantity,
+              };
+              setSuccessData(sd);
+              setFlowState("success");
+              sendTicketEmail({
+                data: {
+                  to: form.email, name: form.full_name, tier: tier.name,
+                  reference: response.reference, amount: tier.price * form.quantity,
+                  quantity: form.quantity,
+                },
+              }).catch(() => {});
+            } else {
+              setErrorMsg("Payment not completed. No charge was made.");
+              setFlowState("error");
+            }
+          } catch (err) {
+            setErrorMsg(
+              err instanceof Error ? err.message
+                : "Verification failed. Email tedxorileiganmu@gmail.com with your reference.",
+            );
             setFlowState("error");
           }
-        } catch (err) {
-          setErrorMsg(
-            err instanceof Error
-              ? err.message
-              : "Verification failed. Email tedxorileiganmu@gmail.com with your reference.",
-          );
-          setFlowState("error");
-        }
-      },
-      onClose: () => {
-        if (!paymentDoneRef.current) {
-          setFlowState("cancelled");
-        }
-      },
-    }).openIframe();
+        },
+        onClose: () => {
+          if (!paymentDoneRef.current) setFlowState("cancelled");
+        },
+      }).openIframe();
+    };
+
+    // If script already ready, open synchronously (stays in user-gesture context)
+    if (window.PaystackPop) {
+      openPopup();
+      return;
+    }
+
+    // Script not yet loaded — fetch it, then open
+    ensurePaystackScript()
+      .then(openPopup)
+      .catch(() => {
+        setErrorMsg("Could not load payment system. Check your connection and try again.");
+        setFlowState("error");
+      });
   };
 
-  const isFormScreen =
-    flowState === "idle" || flowState === "saving" || flowState === "cancelled" || flowState === "error";
-
+  // Form is visible for all states except success and verifying
+  const isFormScreen = flowState !== "success" && flowState !== "verifying";
   const allowBackdropClose = flowState === "idle" || flowState === "cancelled" || flowState === "success";
 
-  // While Paystack popup is open, unmount our overlay entirely so it
-  // doesn't sit on top of the Paystack iframe.
-  if (flowState === "awaiting") return null;
-
-  // After Paystack closes but before verification completes, show a
-  // lightweight full-screen indicator so the screen isn't blank.
+  // After Paystack closes, show full-screen verifying overlay while we
+  // call the server — clean and unambiguous.
   if (flowState === "verifying") {
     return (
-      <div className="fixed inset-0 z-50 bg-paper flex flex-col items-center justify-center gap-5">
+      <div className="fixed inset-0 z-[100] bg-paper flex flex-col items-center justify-center gap-5">
         <div className="h-px w-16 bg-red animate-pulse" />
         <p className="text-[11px] uppercase tracking-[0.3em] text-muted-foreground">Verifying payment…</p>
         <p className="font-serif italic text-ink/40 text-sm">Confirming with Paystack. Just a moment.</p>
@@ -405,9 +386,10 @@ function TicketDialog({ tier, onClose }: { tier: Tier; onClose: () => void }) {
                   </div>
 
                   <button
-                    className="w-full bg-red text-white py-5 text-xs uppercase tracking-[0.3em] hover:bg-ink transition-colors"
+                    disabled={flowState === "saving"}
+                    className="w-full bg-red text-white py-5 text-xs uppercase tracking-[0.3em] hover:bg-ink transition-colors disabled:opacity-60"
                   >
-                    Pay with Paystack →
+                    {flowState === "saving" ? "Opening Paystack…" : "Pay with Paystack →"}
                   </button>
                   <p className="text-[10px] uppercase tracking-[0.25em] text-muted-foreground text-center">
                     Secured by Paystack · No redirect · Payment opens here
