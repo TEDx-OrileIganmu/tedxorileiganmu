@@ -31,12 +31,12 @@ export const Route = createFileRoute("/volunteer")({
       {
         name: "description",
         content:
-          "Shape the stage. Join the crew behind TEDxOrileIganmu. October 2026, Surulere, Lagos. 12 roles. One unforgettable day.",
+          "Shape the stage. Join the crew behind TEDxOrileIganmu. 6 March 2027, Surulere, Lagos. 12 roles. One unforgettable day.",
       },
       { property: "og:title", content: "Volunteer · TEDxOrileIganmu" },
       {
         property: "og:description",
-        content: "Shape the stage. 12 roles. One day. October 2026.",
+        content: "Shape the stage. 12 roles. One day. 6 March 2027.",
       },
     ],
   }),
@@ -152,7 +152,7 @@ const ROLE_CARDS: RoleCard[] = [
 /* ─────────────────────────────────────────
    Stats strip data
 ───────────────────────────────────────── */
-const STATS = ["12 roles", "1 day", "October 2026", "Surulere, Lagos"];
+const STATS = ["12 roles", "1 day", "6 March 2027", "Surulere, Lagos"];
 
 /* ─────────────────────────────────────────
    Why volunteer benefits
@@ -161,7 +161,7 @@ const BENEFITS = [
   {
     icon: Star,
     title: "Rare access.",
-    body: "Get backstage and front-of-house access to one of Lagos's most curated idea events of 2026.",
+    body: "Get backstage and front-of-house access to one of Lagos's most curated idea events of 2027.",
   },
   {
     icon: Globe,
@@ -251,7 +251,7 @@ function HeroSection() {
       >
         <div className="flex items-center gap-3 text-[11px] uppercase tracking-[0.3em] text-white/40">
           <span className="h-px w-8 bg-red" />
-          <span>Volunteer · TEDxOrileIganmu 2026</span>
+          <span>Volunteer · TEDxOrileIganmu 2027</span>
         </div>
       </motion.div>
 
@@ -324,7 +324,7 @@ function HeroSection() {
         className="mx-auto max-w-7xl w-full px-6 md:px-10 pb-10 md:pb-12"
       >
         <p className="text-[10px] uppercase tracking-[0.3em] text-white/25">
-          October 2026 · The Stable by Union Bank · Surulere, Lagos
+          6 March 2027 · The Stable by Union Bank · Surulere, Lagos
         </p>
       </motion.div>
     </section>
@@ -653,7 +653,7 @@ function ApplicationForm() {
               transition={{ duration: 0.6, ease, delay: 0.2 }}
               className="mt-6 font-serif italic text-lg text-ink/60 leading-relaxed"
             >
-              Fill in the form. We review every application personally and will reach out before September 2026.
+              Fill in the form. We review every application personally and will reach out before February 2027.
             </motion.p>
 
             <motion.div
@@ -905,12 +905,12 @@ function SuccessState() {
       </h3>
 
       <p className="font-serif italic text-lg text-ink/60 max-w-sm mx-auto leading-relaxed mb-8">
-        Thank you for wanting to help shape this. We will review your application and reach out before September 2026.
+        Thank you for wanting to help shape this. We will review your application and reach out before February 2027.
       </p>
 
       <div className="flex items-center gap-3 justify-center text-[11px] uppercase tracking-[0.25em] text-muted-foreground">
         <span className="h-px w-8 bg-red" />
-        <span>TEDxOrileIganmu · October 2026</span>
+        <span>TEDxOrileIganmu · 6 March 2027</span>
         <span className="h-px w-8 bg-red" />
       </div>
     </motion.div>

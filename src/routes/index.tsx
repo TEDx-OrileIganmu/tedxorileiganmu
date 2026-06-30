@@ -6,9 +6,9 @@ export const Route = createFileRoute("/")({
   head: () => ({
     meta: [
       { title: "TEDxOrileIganmu · From Orile, to the World." },
-      { name: "description", content: "An independently TED-licensed event. October 2026, The Stable by Union Bank, Surulere, Lagos. One hundred seats." },
+      { name: "description", content: "An independently TED-licensed event. 6 March 2027, The Stable by Union Bank, Surulere, Lagos. One hundred seats." },
       { property: "og:title", content: "TEDxOrileIganmu · From Orile, to the World." },
-      { property: "og:description", content: "October 2026 · Surulere, Lagos. One day. One hundred seats. Nigerian ideas, on their own terms." },
+      { property: "og:description", content: "6 March 2027 · Surulere, Lagos. One day. One hundred seats. Nigerian ideas, on their own terms." },
     ],
   }),
   component: HomePage,
@@ -19,7 +19,7 @@ const ease = [0.22, 1, 0.36, 1] as const;
 const STATS = [
   { value: "100", label: "Seats" },
   { value: "1", label: "Day" },
-  { value: "Oct", label: "2026" },
+  { value: "Mar", label: "2027" },
   { value: "LOS", label: "Lagos" },
 ];
 
@@ -69,7 +69,7 @@ function HomePage() {
             className="mt-14 md:mt-20 grid gap-10 md:grid-cols-[1.5fr_1fr] md:gap-20 items-end pb-20 md:pb-32"
           >
             <p className="font-serif text-xl md:text-2xl text-ink/60 max-w-xl leading-snug">
-              October 2026 · The Stable by Union Bank, Surulere, Lagos. One day. A small room. Ideas that refuse to be polite.
+              6 March 2027 · The Stable by Union Bank, Surulere, Lagos. One day. A small room. Ideas that refuse to be polite.
             </p>
             <div className="flex flex-col sm:flex-row md:flex-col gap-3">
               <Link to="/tickets" className="group relative inline-flex items-center justify-center bg-red text-white px-8 py-4 text-xs uppercase tracking-[0.25em] overflow-hidden">
@@ -113,7 +113,7 @@ function HomePage() {
           >
             {Array.from({ length: 2 }).map((_, k) => (
               <div key={k} className="flex shrink-0 gap-12 pr-12">
-                {["Vol. 01 · 2026", "Surulere, Lagos", "100 Seats Only", "October 2026", "TED Licensed", "From Orile, to the World"].map((s, i) => (
+                {["Vol. 01 · 2027", "Surulere, Lagos", "100 Seats Only", "6 March 2027", "TED Licensed", "From Orile, to the World"].map((s, i) => (
                   <span key={`${k}-${i}`} className="flex items-center gap-12">
                     <span className="text-red">◆</span>{s}
                   </span>

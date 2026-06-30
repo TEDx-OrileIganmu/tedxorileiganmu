@@ -54,7 +54,7 @@ function SupportPage() {
                 <span className="absolute inset-0 bg-ink translate-y-full group-hover:translate-y-0 transition-transform duration-500 ease-[cubic-bezier(0.22,1,0.36,1)]" />
                 <span className="relative">Apply to Volunteer →</span>
               </Link>
-              <p className="mt-4 text-sm text-muted-foreground">12 roles · one day · October 2026</p>
+              <p className="mt-4 text-sm text-muted-foreground">12 roles · one day · 6 March 2027</p>
             </div>
           </motion.div>
         </div>

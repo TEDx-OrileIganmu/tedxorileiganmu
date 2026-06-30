@@ -32,14 +32,14 @@ function AboutPage() {
               TEDxOrileIganmu is a gathering of thinkers, builders and storytellers from Lagos and beyond, independently organised under a TED license by <span className="text-ink font-normal">Ekanem Michael</span>.
             </p>
             <p>
-              Coming October 2026 to The Stable by Union Bank, Surulere. One day. One hundred seats. Ideas that refuse to be polite.
+              Coming 6 March 2027 to The Stable by Union Bank, Surulere. One day. One hundred seats. Ideas that refuse to be polite.
             </p>
           </div>
         </div>
 
         <div className="mt-20 grid gap-px md:grid-cols-3 bg-border border border-border">
           {[
-            { k: "When", t: "October 2026", s: "One-day programme" },
+            { k: "When", t: "6 March 2027", s: "One-day programme" },
             { k: "Where", t: "The Stable by Union Bank", s: "Surulere, Lagos" },
             { k: "How", t: "TED-licensed", s: "Independently organised" },
           ].map((it) => (

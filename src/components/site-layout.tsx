@@ -140,7 +140,7 @@ function SiteFooter() {
           </div>
         </div>
         <div className="mt-16 pt-8 border-t border-white/10 flex flex-wrap items-center justify-between gap-4 text-[10px] uppercase tracking-[0.25em] text-white/30">
-          <p>© 2026 TEDxOrileIganmu</p>
+          <p>© 2027 TEDxOrileIganmu</p>
           <p>Independently operated under license from TED.</p>
         </div>
       </div>
