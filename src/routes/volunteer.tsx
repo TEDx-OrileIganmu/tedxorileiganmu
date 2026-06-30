@@ -267,19 +267,17 @@ function HeroSection() {
             Shape
           </motion.h1>
         </div>
-        <div className="overflow-hidden pb-[0.6em]">
-          <motion.h1
-            initial={{ y: "110%" }}
-            animate={{ y: 0 }}
-            transition={{ duration: 0.9, ease, delay: 0.32 }}
-            className="font-display font-medium tracking-[-0.04em] leading-[0.88] text-[clamp(4rem,13vw,11rem)]"
-          >
-            the{" "}
-            <span className="font-serif italic font-normal text-red">
-              Stage.
-            </span>
-          </motion.h1>
-        </div>
+        <motion.h1
+          initial={{ opacity: 0, y: 28 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.9, ease, delay: 0.32 }}
+          className="font-display font-medium tracking-[-0.04em] leading-[0.88] text-[clamp(4rem,13vw,11rem)] pb-[0.25em]"
+        >
+          the{" "}
+          <span className="font-serif italic font-normal text-red">
+            Stage.
+          </span>
+        </motion.h1>
 
         <motion.p
           initial={{ opacity: 0, y: 20 }}
