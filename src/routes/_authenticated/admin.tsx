@@ -618,11 +618,18 @@ function TicketsTab() {
                     })}
                   </Td>
                   <Td>
-                    <InlineSelect
-                      value={r.payment_status}
-                      options={TICKET_STATUSES}
-                      onChange={(v) => updateStatus(r.id, v)}
-                    />
+                    {r.payment_status === "paid" ? (
+                      <div className="flex items-center gap-2">
+                        <StatusPill status="paid" />
+                        <span className="text-[9px] uppercase tracking-[0.15em] text-muted-foreground">auto</span>
+                      </div>
+                    ) : (
+                      <InlineSelect
+                        value={r.payment_status}
+                        options={["pending", "failed", "refunded"]}
+                        onChange={(v) => updateStatus(r.id, v)}
+                      />
+                    )}
                   </Td>
                 </motion.tr>
               ))}

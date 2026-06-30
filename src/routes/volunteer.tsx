@@ -597,7 +597,7 @@ function ApplicationForm() {
     const { error } = await supabase.from("volunteer_applications").insert({
       full_name: form.full_name,
       email: form.email,
-      phone: form.phone || null,
+      phone: form.phone,
       role: form.role,
       availability: form.availability,
       experience: form.experience,

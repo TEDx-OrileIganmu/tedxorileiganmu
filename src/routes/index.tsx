@@ -6,9 +6,9 @@ export const Route = createFileRoute("/")({
   head: () => ({
     meta: [
       { title: "TEDxOrileIganmu · From Orile, to the World." },
-      { name: "description", content: "An independently TED-licensed event. 6 March 2027, The Stable by Union Bank, Surulere, Lagos. One hundred seats." },
-      { property: "og:title", content: "TEDxOrileIganmu · From Orile, to the World." },
-      { property: "og:description", content: "6 March 2027 · Surulere, Lagos. One day. One hundred seats. Nigerian ideas, on their own terms." },
+      { name: "description", content: "Beyond Boundaries · An independently TED-licensed event. 6 March 2027, The Stable by Union Bank, Surulere, Lagos. One hundred seats." },
+      { property: "og:title", content: "TEDxOrileIganmu · Beyond Boundaries" },
+      { property: "og:description", content: "6 March 2027 · Surulere, Lagos. Ideas that transcend place, perspective, and possibility." },
     ],
   }),
   component: HomePage,
@@ -33,10 +33,16 @@ function HomePage() {
             initial={{ opacity: 0, y: 8 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.5, ease }}
-            className="flex items-center gap-3 text-[10px] uppercase tracking-[0.15em] md:tracking-[0.3em] text-red mb-10"
+            className="flex flex-col gap-2 mb-10"
           >
-            <span className="h-px w-8 bg-red shrink-0" />
-            <span>Independently organised · TED licensed</span>
+            <div className="flex items-center gap-3 text-[10px] uppercase tracking-[0.15em] md:tracking-[0.3em] text-red">
+              <span className="h-px w-8 bg-red shrink-0" />
+              <span>Independently organised · TED licensed</span>
+            </div>
+            <div className="flex items-center gap-3 text-[10px] uppercase tracking-[0.15em] md:tracking-[0.25em] text-ink/40">
+              <span className="h-px w-8 bg-ink/15 shrink-0" />
+              <span>Theme · Beyond Boundaries</span>
+            </div>
           </motion.div>
 
           <h1 className="font-display font-medium tracking-[-0.04em] leading-[0.88] text-[clamp(3rem,10.5vw,9.5rem)] max-w-[16ch]">
@@ -113,7 +119,7 @@ function HomePage() {
           >
             {Array.from({ length: 2 }).map((_, k) => (
               <div key={k} className="flex shrink-0 gap-12 pr-12">
-                {["Vol. 01 · 2027", "Surulere, Lagos", "100 Seats Only", "6 March 2027", "TED Licensed", "From Orile, to the World"].map((s, i) => (
+                {["Vol. 01 · 2027", "Surulere, Lagos", "100 Seats Only", "6 March 2027", "Beyond Boundaries", "Ideas Worth Spreading", "From Orile, to the World"].map((s, i) => (
                   <span key={`${k}-${i}`} className="flex items-center gap-12">
                     <span className="text-red">◆</span>{s}
                   </span>
