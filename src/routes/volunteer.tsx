@@ -267,7 +267,7 @@ function HeroSection() {
             Shape
           </motion.h1>
         </div>
-        <div className="overflow-hidden">
+        <div className="overflow-hidden pb-[0.12em]">
           <motion.h1
             initial={{ y: "110%" }}
             animate={{ y: 0 }}
@@ -276,7 +276,7 @@ function HeroSection() {
           >
             the{" "}
             <span className="font-serif italic font-normal text-red">
-              stage.
+              Stage.
             </span>
           </motion.h1>
         </div>

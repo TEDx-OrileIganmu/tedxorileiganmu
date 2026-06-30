@@ -66,7 +66,6 @@ function SupportPage() {
         sideContent={
           <ul className="space-y-3 text-sm text-ink/70">
             {[
-              "Logo placement across event materials and social content",
               "Dedicated partner seat allocation (VIP + Standard)",
               "Post-event footage and photography credit",
               "Curator-led partnership report and reach metrics",
@@ -96,11 +95,9 @@ function SupportPage() {
               <p className="font-serif italic text-lg md:text-xl text-white/60 leading-relaxed max-w-md mb-8">
                 Every naira goes toward venue, production, speaker travel, and subsidised seats for attendees who need them.
               </p>
-              <div className="space-y-2 text-sm text-white/80">
-                <p className="text-[10px] uppercase tracking-[0.3em] text-white/40 mb-3">Direct bank transfer</p>
-                <p><span className="text-white/40">Account Name:</span> TEDxOrileIganmu</p>
-                <p><span className="text-white/40">Bank:</span> Union Bank of Nigeria</p>
-                <p><span className="text-white/40">Account Number:</span> 0123456789</p>
+              <div className="space-y-3 text-sm text-white/80">
+                <p className="text-[10px] uppercase tracking-[0.3em] text-white/40 mb-3">How to give</p>
+                <p className="text-white/60 leading-relaxed">Fill out the form, submit your pledge, and we'll send you a secure Paystack payment link by email within 24 hours.</p>
               </div>
             </motion.div>
             <DonateForm />
@@ -219,7 +216,7 @@ function DonateForm() {
   if (state === "done") return (
     <div className="border border-white/15 p-10 bg-white/5">
       <p className="font-serif italic text-2xl text-white">Thank you, {form.donor_name}.</p>
-      <p className="mt-3 text-white/60 text-sm">Send your transfer receipt to tedxorileiganmu@gmail.com. Every gift is acknowledged personally.</p>
+      <p className="mt-3 text-white/60 text-sm">We will send a Paystack payment link to your email within 24 hours. Every gift is acknowledged personally.</p>
     </div>
   );
 

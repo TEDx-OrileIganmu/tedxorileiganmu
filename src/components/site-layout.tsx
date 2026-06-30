@@ -35,12 +35,6 @@ export function SiteLayout({ children }: { children: ReactNode }) {
               </Link>
             ))}
           </nav>
-          <Link
-            to="/tickets"
-            className="hidden md:inline-flex items-center gap-2 bg-red text-white text-[10px] uppercase tracking-[0.2em] px-5 py-2.5 hover:bg-ink transition-colors duration-300"
-          >
-            Get tickets
-          </Link>
           <button
             aria-label="Menu"
             onClick={() => setOpen((v) => !v)}

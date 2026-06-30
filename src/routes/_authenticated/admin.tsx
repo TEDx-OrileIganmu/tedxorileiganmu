@@ -514,7 +514,8 @@ type TicketRow = {
 const TICKET_STATUSES = ["pending", "paid", "failed", "refunded"];
 
 function TicketsTab() {
-  const { rows, refresh } = useRows<TicketRow>("ticket_orders");
+  const { rows: allRows, refresh } = useRows<TicketRow>("ticket_orders");
+  const rows = allRows ? allRows.filter((r) => r.tier === "regular") : null;
 
   const updateStatus = async (id: string, payment_status: string) => {
     await supabase

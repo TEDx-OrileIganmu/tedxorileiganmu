@@ -107,16 +107,22 @@ function AboutPage() {
               className="relative"
             >
               <div className="aspect-[3/4] relative overflow-hidden bg-white/5">
+                {/* Placeholder shown when photo is absent */}
+                <div className="absolute inset-0 flex flex-col items-center justify-center"
+                  style={{ backgroundImage: "radial-gradient(circle, rgba(255,255,255,0.03) 1px, transparent 1px)", backgroundSize: "28px 28px" }}
+                >
+                  <span className="font-display font-semibold text-[7rem] leading-none text-white/8 select-none">EM</span>
+                </div>
                 <img
                   src="/ekanem.jpg"
                   alt="Ekanem Michael"
-                  className="w-full h-full object-cover object-top grayscale"
+                  className="absolute inset-0 w-full h-full object-cover object-top grayscale"
                   onError={(e) => {
                     (e.currentTarget as HTMLImageElement).style.display = "none";
                   }}
                 />
                 {/* Name overlay at bottom */}
-                <div className="absolute inset-0 bg-gradient-to-t from-ink/80 via-transparent to-transparent" />
+                <div className="absolute inset-0 bg-gradient-to-t from-ink/90 via-ink/20 to-transparent" />
                 <div className="absolute bottom-0 left-0 right-0 p-6">
                   <p className="font-serif italic text-2xl text-white">Ekanem Michael</p>
                   <p className="mt-1 text-[10px] uppercase tracking-[0.2em] text-white/50">Licensee · Curator</p>
