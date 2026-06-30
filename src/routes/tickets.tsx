@@ -71,6 +71,17 @@ const TIERS: Tier[] = [
       { label: "Open-floor seating", included: true },
       { label: "Light refreshments", included: true },
       { label: "Printed programme", included: true },
+      { label: "Speaker reception", included: false },
+    ],
+  },
+  {
+    id: "vip", name: "VIP", price: 25000, tag: "Front Row & Reception", featured: true,
+    perks: [
+      { label: "Everything in Regular", included: true },
+      { label: "Front-row reserved seat", included: true },
+      { label: "Full lunch & dinner", included: true },
+      { label: "Speaker & curator reception", included: true },
+      { label: "Signed programme · priority entry", included: true },
     ],
   },
 ];
@@ -94,7 +105,7 @@ function TicketsPage() {
       />
 
       <section className="mx-auto max-w-7xl px-6 md:px-10 pb-24 md:pb-32">
-        <div className="max-w-md mx-auto">
+        <div className="grid gap-6 md:gap-8 md:grid-cols-2 max-w-3xl mx-auto">
           {TIERS.map((t, i) => (
             <motion.article
               key={t.id}
@@ -143,7 +154,7 @@ function TicketsPage() {
           Limited to 100 seats · One day only · No re-entry without badge
         </p>
         <p className="mt-3 text-[10px] uppercase tracking-[0.2em] text-muted-foreground/60 text-center">
-          Standard &amp; VIP tiers opening soon
+          Standard tier opening soon
         </p>
       </section>
 
