@@ -873,11 +873,29 @@ function VolunteersTab() {
     refresh();
   };
 
+  const handleExport = useCallback(() => {
+    if (!rows) return;
+    exportCSV(
+      "volunteers.csv",
+      rows.map((r) => ({
+        name: r.full_name,
+        email: r.email,
+        phone: r.phone ?? "",
+        role: r.role,
+        availability: r.availability ?? "",
+        experience: r.experience ?? "",
+        note: r.note ?? "",
+        status: r.status,
+        date: r.created_at,
+      }))
+    );
+  }, [rows]);
+
   if (!rows) return <Loader />;
 
   return (
     <div>
-      <SectionHeader title="Volunteers" count={rows.length} />
+      <SectionHeader title="Volunteers" count={rows.length} onExport={rows.length > 0 ? handleExport : undefined} />
       {rows.length === 0 ? (
         <EmptyState label="volunteer applications" />
       ) : (
