@@ -192,25 +192,96 @@ export const sendAdminMessage = createServerFn({ method: "POST" })
 
     const bodyHtml = data.body
       .split("\n")
-      .map((line) => `<p style="margin:0 0 14px;color:#374151;font-size:15px;line-height:1.6;">${line || "&nbsp;"}</p>`)
+      .map((line) =>
+        line.trim()
+          ? `<p style="margin:0 0 18px;color:#374151;font-size:16px;line-height:1.75;font-weight:400;">${line}</p>`
+          : `<p style="margin:0 0 18px;">&nbsp;</p>`
+      )
       .join("");
 
     const html = `<!DOCTYPE html>
 <html lang="en">
-<head><meta charset="utf-8"/><meta name="viewport" content="width=device-width,initial-scale=1"/></head>
-<body style="margin:0;padding:0;background:#f4f4f4;font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;">
-<div style="max-width:600px;margin:32px auto;background:#fff;">
-  <div style="background:#111;padding:28px 32px;border-top:4px solid #E62B1E;">
-    <span style="background:#E62B1E;color:#fff;font-size:13px;font-weight:900;letter-spacing:.08em;padding:5px 8px;line-height:1;">TED</span><span style="background:#111;color:#E62B1E;border:1px solid #E62B1E;font-size:13px;font-weight:900;padding:5px 8px;line-height:1;">x</span><span style="margin-left:10px;color:rgba(255,255,255,.5);font-size:11px;letter-spacing:.25em;text-transform:uppercase;">OrileIganmu</span>
+<head>
+<meta charset="utf-8"/>
+<meta name="viewport" content="width=device-width,initial-scale=1"/>
+<title>${data.subject}</title>
+</head>
+<body style="margin:0;padding:0;background:#efefef;font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Helvetica,Arial,sans-serif;-webkit-font-smoothing:antialiased;">
+
+<div style="max-width:600px;margin:0 auto;">
+
+  <!-- Header -->
+  <div style="background:#111111;border-top:4px solid #E62B1E;">
+    <div style="padding:36px 44px 40px;">
+      <!-- Wordmark -->
+      <div style="margin-bottom:40px;">
+        <span style="background:#E62B1E;color:#fff;font-size:14px;font-weight:900;letter-spacing:.08em;padding:6px 10px;display:inline;">TED</span><span style="background:#111;color:#E62B1E;border:1px solid #E62B1E;font-size:14px;font-weight:900;padding:6px 10px;display:inline;">x</span><span style="margin-left:14px;color:rgba(255,255,255,.4);font-size:10px;letter-spacing:.3em;text-transform:uppercase;vertical-align:middle;">OrileIganmu</span>
+      </div>
+      <!-- Hero -->
+      <p style="margin:0 0 8px;color:rgba(255,255,255,.3);font-size:10px;letter-spacing:.3em;text-transform:uppercase;">Message from the curator</p>
+      <h1 style="margin:0;color:#fff;font-size:38px;font-weight:800;letter-spacing:-.025em;line-height:1.1;">Beyond<br/><span style="color:#E62B1E;font-weight:300;font-style:italic;">Boundaries.</span></h1>
+    </div>
+    <!-- Red accent bar -->
+    <div style="height:1px;background:linear-gradient(to right,#E62B1E,transparent);"></div>
   </div>
-  <div style="padding:36px 32px;">
-    <p style="margin:0 0 6px;font-size:11px;letter-spacing:.2em;text-transform:uppercase;color:#999;">Message for</p>
-    <p style="margin:0 0 28px;font-size:22px;font-weight:700;color:#111;letter-spacing:-.01em;">${data.name}</p>
-    <div style="border-left:3px solid #E62B1E;padding-left:20px;margin-bottom:32px;">${bodyHtml}</div>
-    <div style="border-top:1px solid #eee;padding-top:24px;">
-      <p style="margin:0;color:#999;font-size:11px;line-height:1.7;">TEDxOrileIganmu &middot; The Stable by Union Bank &middot; Surulere, Lagos &middot; 6&nbsp;March&nbsp;2027</p>
+
+  <!-- Body -->
+  <div style="background:#ffffff;padding:48px 44px 40px;">
+    <!-- Greeting -->
+    <p style="margin:0 0 32px;font-size:28px;font-weight:700;color:#111;letter-spacing:-.02em;line-height:1.2;">Hi ${data.name},</p>
+
+    <!-- Message body -->
+    <div style="margin-bottom:40px;">${bodyHtml}</div>
+
+    <!-- Divider with diamond -->
+    <div style="text-align:center;margin-bottom:40px;">
+      <div style="display:inline-flex;align-items:center;gap:16px;">
+        <div style="width:60px;height:1px;background:#e5e5e5;display:inline-block;vertical-align:middle;"></div>
+        <div style="width:7px;height:7px;background:#E62B1E;transform:rotate(45deg);display:inline-block;vertical-align:middle;"></div>
+        <div style="width:60px;height:1px;background:#e5e5e5;display:inline-block;vertical-align:middle;"></div>
+      </div>
+    </div>
+
+    <!-- Event card -->
+    <div style="border:1px solid #e8e8e8;position:relative;overflow:hidden;">
+      <div style="height:3px;background:#E62B1E;"></div>
+      <div style="padding:28px 32px;">
+        <p style="margin:0 0 20px;font-size:10px;letter-spacing:.28em;text-transform:uppercase;color:#aaa;">Event Details</p>
+        <table style="border-collapse:collapse;width:100%;">
+          <tr>
+            <td style="padding:0 32px 0 0;vertical-align:top;white-space:nowrap;">
+              <p style="margin:0 0 4px;font-size:9px;letter-spacing:.2em;text-transform:uppercase;color:#bbb;">Date</p>
+              <p style="margin:0;font-size:15px;font-weight:700;color:#111;letter-spacing:-.01em;">6 March 2027</p>
+              <p style="margin:2px 0 0;font-size:11px;color:#888;">Saturday · Doors 8:30 AM</p>
+            </td>
+            <td style="padding:0 32px 0 0;vertical-align:top;white-space:nowrap;">
+              <p style="margin:0 0 4px;font-size:9px;letter-spacing:.2em;text-transform:uppercase;color:#bbb;">Venue</p>
+              <p style="margin:0;font-size:15px;font-weight:700;color:#111;letter-spacing:-.01em;">The Stable by Union Bank</p>
+              <p style="margin:2px 0 0;font-size:11px;color:#888;">Surulere, Lagos · Nigeria</p>
+            </td>
+          </tr>
+        </table>
+      </div>
+    </div>
+
+    <!-- Signature -->
+    <div style="margin-top:40px;padding-top:28px;border-top:1px solid #f0f0f0;">
+      <p style="margin:0 0 4px;font-size:14px;font-weight:600;color:#111;">Ekanem Michael</p>
+      <p style="margin:0;font-size:12px;color:#999;letter-spacing:.05em;">Curator · TEDxOrileIganmu</p>
     </div>
   </div>
+
+  <!-- Footer -->
+  <div style="background:#111111;padding:28px 44px;">
+    <p style="margin:0 0 10px;color:rgba(255,255,255,.25);font-size:11px;line-height:1.8;">
+      TEDxOrileIganmu &middot; The Stable by Union Bank, Surulere, Lagos &middot; 6&nbsp;March&nbsp;2027<br/>
+      This event is independently organised under a license from TED.
+    </p>
+    <p style="margin:0;font-size:11px;color:rgba(255,255,255,.15);">
+      Questions? <a href="mailto:tedxorileiganmu@gmail.com" style="color:#E62B1E;text-decoration:none;">tedxorileiganmu@gmail.com</a>
+    </p>
+  </div>
+
 </div>
 </body>
 </html>`;

@@ -606,7 +606,9 @@ body{background:#1a1a1a;min-height:100vh;display:flex;flex-direction:column;alig
   win.document.close();
 }
 
-function MessageModal({ row, onClose }: { row: TicketRow; onClose: () => void }) {
+type MessageTarget = { full_name: string; email: string };
+
+function MessageModal({ target, kind = "Attendee", onClose }: { target: MessageTarget; kind?: string; onClose: () => void }) {
   const [subject, setSubject] = useState(`TEDxOrileIganmu · 6 March 2027`);
   const [body, setBody] = useState("");
   const [status, setStatus] = useState<"idle" | "sending" | "sent" | "error">("idle");
@@ -616,7 +618,7 @@ function MessageModal({ row, onClose }: { row: TicketRow; onClose: () => void })
     e.preventDefault();
     setStatus("sending");
     try {
-      const result = await sendAdminMessage({ data: { to: row.email, name: row.full_name, subject, body } });
+      const result = await sendAdminMessage({ data: { to: target.email, name: target.full_name, subject, body } });
       if (result.sent) { setStatus("sent"); }
       else { setErrorMsg(result.reason ?? "Failed to send."); setStatus("error"); }
     } catch (err) {
@@ -641,18 +643,18 @@ function MessageModal({ row, onClose }: { row: TicketRow; onClose: () => void })
                 <span className="h-px w-8 bg-red" /><span>Sent</span>
               </div>
               <p className="font-display text-2xl tracking-[-0.01em] mb-2">Message delivered.</p>
-              <p className="text-sm text-muted-foreground mb-6">Your message was sent to {row.email}.</p>
+              <p className="text-sm text-muted-foreground mb-6">Your message was sent to {target.email}.</p>
               <button onClick={onClose} className="border border-ink px-5 py-2.5 text-[10px] uppercase tracking-[0.25em] hover:bg-ink hover:text-white transition-colors">Close</button>
             </div>
           ) : (
             <form onSubmit={send} className="space-y-5">
               <div>
                 <div className="flex items-center gap-3 text-[11px] uppercase tracking-[0.25em] text-muted-foreground mb-4">
-                  <span className="h-px w-8 bg-red" /><span>Message Attendee</span>
+                  <span className="h-px w-8 bg-red" /><span>Message {kind}</span>
                 </div>
                 <button type="button" onClick={onClose} className="absolute top-5 right-6 text-[11px] uppercase tracking-[0.3em] text-muted-foreground hover:text-red transition-colors">Close</button>
-                <p className="font-display text-xl tracking-[-0.01em]">{row.full_name}</p>
-                <p className="text-[11px] text-muted-foreground mt-0.5">{row.email}</p>
+                <p className="font-display text-xl tracking-[-0.01em]">{target.full_name}</p>
+                <p className="text-[11px] text-muted-foreground mt-0.5">{target.email}</p>
               </div>
               <label className="block">
                 <span className="block text-[10px] uppercase tracking-[0.3em] text-muted-foreground mb-2">Subject</span>
@@ -661,10 +663,11 @@ function MessageModal({ row, onClose }: { row: TicketRow; onClose: () => void })
               </label>
               <label className="block">
                 <span className="block text-[10px] uppercase tracking-[0.3em] text-muted-foreground mb-2">Message</span>
-                <textarea required rows={6} value={body} onChange={(e) => setBody(e.target.value)}
+                <textarea required rows={7} value={body} onChange={(e) => setBody(e.target.value)}
                   placeholder="Type your message here…"
-                  className="w-full bg-transparent border border-ink/15 p-3 focus:outline-none focus:border-red text-sm resize-none" />
+                  className="w-full bg-transparent border border-ink/15 p-3 focus:outline-none focus:border-red text-sm resize-none leading-relaxed" />
               </label>
+              <p className="text-[10px] text-muted-foreground">The recipient will receive a beautifully formatted email from TEDxOrileIganmu.</p>
               {status === "error" && <p className="text-[11px] text-red">{errorMsg}</p>}
               <div className="flex gap-3">
                 <button type="submit" disabled={status === "sending"}
@@ -688,7 +691,7 @@ function TicketsTab() {
   const { rows: allRows, refresh } = useRows<TicketRow>("ticket_orders");
   const rows = allRows ? allRows.filter((r) => r.tier === "regular" || r.tier === "standard" || r.tier === "vip") : null;
   const [search, setSearch] = useState("");
-  const [msgTarget, setMsgTarget] = useState<TicketRow | null>(null);
+  const [msgTarget, setMsgTarget] = useState<MessageTarget | null>(null);
 
   const filtered = rows
     ? rows.filter((r) => {
@@ -817,7 +820,7 @@ function TicketsTab() {
                           View Ticket
                         </button>
                         <button
-                          onClick={() => setMsgTarget(r)}
+                          onClick={() => setMsgTarget({ full_name: r.full_name, email: r.email })}
                           className="flex items-center gap-1.5 border border-border px-2.5 py-1.5 text-[9px] uppercase tracking-[0.2em] hover:border-red hover:text-red transition-colors whitespace-nowrap"
                         >
                           <svg width="10" height="10" viewBox="0 0 10 10" fill="none"><rect x="1" y="2" width="8" height="6" rx="0.5" stroke="currentColor" strokeWidth="1.1"/><path d="M1.5 2.5l3.5 3 3.5-3" stroke="currentColor" strokeWidth="1.1" strokeLinecap="round" strokeLinejoin="round"/></svg>
@@ -840,7 +843,7 @@ function TicketsTab() {
         </div>
       )}
 
-      {msgTarget && <MessageModal row={msgTarget} onClose={() => setMsgTarget(null)} />}
+      {msgTarget && <MessageModal target={msgTarget} kind="Attendee" onClose={() => setMsgTarget(null)} />}
     </div>
   );
 }
@@ -864,6 +867,7 @@ const APP_STATUSES = ["new", "reviewing", "accepted", "declined"];
 
 function VolunteersTab() {
   const { rows, refresh } = useRows<VolunteerRow>("volunteer_applications");
+  const [msgTarget, setMsgTarget] = useState<MessageTarget | null>(null);
 
   const updateStatus = async (id: string, status: string) => {
     await supabase
@@ -961,23 +965,26 @@ function VolunteersTab() {
               </div>
 
               {/* Footer */}
-              <div className="flex items-center justify-between pt-3 border-t border-border">
-                <span className="text-[10px] text-muted-foreground">
-                  {new Date(r.created_at).toLocaleDateString("en-NG", {
-                    day: "numeric",
-                    month: "short",
-                  })}
-                </span>
-                <InlineSelect
-                  value={r.status}
-                  options={APP_STATUSES}
-                  onChange={(v) => updateStatus(r.id, v)}
-                />
+              <div className="pt-3 border-t border-border space-y-2">
+                <div className="flex items-center justify-between">
+                  <span className="text-[10px] text-muted-foreground">
+                    {new Date(r.created_at).toLocaleDateString("en-NG", { day: "numeric", month: "short" })}
+                  </span>
+                  <InlineSelect value={r.status} options={APP_STATUSES} onChange={(v) => updateStatus(r.id, v)} />
+                </div>
+                <button
+                  onClick={() => setMsgTarget({ full_name: r.full_name, email: r.email })}
+                  className="w-full flex items-center justify-center gap-2 border border-border py-2 text-[9px] uppercase tracking-[0.2em] hover:border-red hover:text-red transition-colors"
+                >
+                  <svg width="10" height="10" viewBox="0 0 10 10" fill="none"><rect x="1" y="2" width="8" height="6" rx="0.5" stroke="currentColor" strokeWidth="1.1"/><path d="M1.5 2.5l3.5 3 3.5-3" stroke="currentColor" strokeWidth="1.1" strokeLinecap="round" strokeLinejoin="round"/></svg>
+                  Send Message
+                </button>
               </div>
             </motion.article>
           ))}
         </div>
       )}
+      {msgTarget && <MessageModal target={msgTarget} kind="Volunteer" onClose={() => setMsgTarget(null)} />}
     </div>
   );
 }
