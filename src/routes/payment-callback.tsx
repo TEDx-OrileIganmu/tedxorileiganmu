@@ -215,12 +215,12 @@ function PaymentCallbackPage() {
 
   /* ── Ticket success ── */
   if (!ticketData) return null;
-  return <TicketSuccessPage data={ticketData} ref={ref} />;
+  return <TicketSuccessPage data={ticketData} reference={ref} />;
 }
 
 /* ─── Ticket success screen ─────────────────────────────────────────────── */
 
-function TicketSuccessPage({ data, ref }: { data: TicketData; ref: string }) {
+function TicketSuccessPage({ data, reference }: { data: TicketData; reference: string }) {
   return (
     <SiteLayout>
       <div className="mx-auto max-w-lg px-6 py-16 md:py-24">
@@ -250,7 +250,7 @@ function TicketSuccessPage({ data, ref }: { data: TicketData; ref: string }) {
               </span>
             </div>
             <code className="text-[10px] text-white/30 font-mono tracking-wider">
-              {ref.slice(0, 16)}…
+              {reference.slice(0, 16)}…
             </code>
           </div>
           <div className="divide-y divide-border">
@@ -292,7 +292,7 @@ function TicketSuccessPage({ data, ref }: { data: TicketData; ref: string }) {
         {/* Actions */}
         <div className="flex flex-col sm:flex-row gap-3">
           <button
-            onClick={() => downloadTicket(data, ref)}
+            onClick={() => downloadTicket(data, reference)}
             className="group relative flex-1 inline-flex items-center justify-center bg-red text-white py-4 text-[11px] uppercase tracking-[0.3em] overflow-hidden"
           >
             <span className="absolute inset-0 bg-ink translate-y-full group-hover:translate-y-0 transition-transform duration-500 ease-[cubic-bezier(0.22,1,0.36,1)]" />
