@@ -14,6 +14,7 @@ import { Route as TicketsRouteImport } from './routes/tickets'
 import { Route as SupportRouteImport } from './routes/support'
 import { Route as SpeakersRouteImport } from './routes/speakers'
 import { Route as PaymentCallbackRouteImport } from './routes/payment-callback'
+import { Route as DpRouteImport } from './routes/dp'
 import { Route as AuthRouteImport } from './routes/auth'
 import { Route as AboutRouteImport } from './routes/about'
 import { Route as AuthenticatedRouteRouteImport } from './routes/_authenticated/route'
@@ -45,6 +46,11 @@ const PaymentCallbackRoute = PaymentCallbackRouteImport.update({
   path: '/payment-callback',
   getParentRoute: () => rootRouteImport,
 } as any)
+const DpRoute = DpRouteImport.update({
+  id: '/dp',
+  path: '/dp',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const AuthRoute = AuthRouteImport.update({
   id: '/auth',
   path: '/auth',
@@ -74,6 +80,7 @@ export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
   '/about': typeof AboutRoute
   '/auth': typeof AuthRoute
+  '/dp': typeof DpRoute
   '/payment-callback': typeof PaymentCallbackRoute
   '/speakers': typeof SpeakersRoute
   '/support': typeof SupportRoute
@@ -85,6 +92,7 @@ export interface FileRoutesByTo {
   '/': typeof IndexRoute
   '/about': typeof AboutRoute
   '/auth': typeof AuthRoute
+  '/dp': typeof DpRoute
   '/payment-callback': typeof PaymentCallbackRoute
   '/speakers': typeof SpeakersRoute
   '/support': typeof SupportRoute
@@ -98,6 +106,7 @@ export interface FileRoutesById {
   '/_authenticated': typeof AuthenticatedRouteRouteWithChildren
   '/about': typeof AboutRoute
   '/auth': typeof AuthRoute
+  '/dp': typeof DpRoute
   '/payment-callback': typeof PaymentCallbackRoute
   '/speakers': typeof SpeakersRoute
   '/support': typeof SupportRoute
@@ -111,6 +120,7 @@ export interface FileRouteTypes {
     | '/'
     | '/about'
     | '/auth'
+    | '/dp'
     | '/payment-callback'
     | '/speakers'
     | '/support'
@@ -122,6 +132,7 @@ export interface FileRouteTypes {
     | '/'
     | '/about'
     | '/auth'
+    | '/dp'
     | '/payment-callback'
     | '/speakers'
     | '/support'
@@ -134,6 +145,7 @@ export interface FileRouteTypes {
     | '/_authenticated'
     | '/about'
     | '/auth'
+    | '/dp'
     | '/payment-callback'
     | '/speakers'
     | '/support'
@@ -147,6 +159,7 @@ export interface RootRouteChildren {
   AuthenticatedRouteRoute: typeof AuthenticatedRouteRouteWithChildren
   AboutRoute: typeof AboutRoute
   AuthRoute: typeof AuthRoute
+  DpRoute: typeof DpRoute
   PaymentCallbackRoute: typeof PaymentCallbackRoute
   SpeakersRoute: typeof SpeakersRoute
   SupportRoute: typeof SupportRoute
@@ -189,6 +202,13 @@ declare module '@tanstack/react-router' {
       path: '/payment-callback'
       fullPath: '/payment-callback'
       preLoaderRoute: typeof PaymentCallbackRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/dp': {
+      id: '/dp'
+      path: '/dp'
+      fullPath: '/dp'
+      preLoaderRoute: typeof DpRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/auth': {
@@ -245,6 +265,7 @@ const rootRouteChildren: RootRouteChildren = {
   AuthenticatedRouteRoute: AuthenticatedRouteRouteWithChildren,
   AboutRoute: AboutRoute,
   AuthRoute: AuthRoute,
+  DpRoute: DpRoute,
   PaymentCallbackRoute: PaymentCallbackRoute,
   SpeakersRoute: SpeakersRoute,
   SupportRoute: SupportRoute,

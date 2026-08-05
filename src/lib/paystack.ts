@@ -132,7 +132,7 @@ h1{font-size:34px;font-weight:700;color:#111;letter-spacing:-.02em;margin-bottom
 <body>
 <div class="wrap">
 <div class="hdr">
-  <span class="ted">TED</span><span class="tedx">x</span><span class="evname">OrileIganmu</span>
+  <img src="https://tedxorileiganmu.xyz/logo-white.png" alt="TEDxOrileIganmu" width="160" style="display:block;height:auto;" />
 </div>
 <div class="body">
   <h1>You're in the room.</h1>
@@ -149,16 +149,31 @@ h1{font-size:34px;font-weight:700;color:#111;letter-spacing:-.02em;margin-bottom
     <div class="row"><span class="lbl">Venue</span><span class="val">The Stable by Union Bank, Surulere, Lagos</span></div>
     <div class="theme-row"><span class="theme-bar"></span><span class="theme-txt">Beyond Boundaries &middot; Ideas that transcend place, perspective, and possibility.</span></div>
   </div>
-  <div class="cta"><a class="btn" href="https://tedxorileiganmu.com/tickets">View Event Info &rarr;</a></div>
+  <!-- WhatsApp CTA -->
+  <div style="border:1px solid #e8e8e8;margin:0 32px 32px;overflow:hidden;">
+    <div style="height:3px;background:#25D366;"></div>
+    <div style="padding:20px 24px;">
+      <p style="margin:0 0 3px;font-size:10px;letter-spacing:.25em;text-transform:uppercase;color:#aaa;">Volunteer Group</p>
+      <p style="margin:0 0 5px;font-size:16px;font-weight:700;color:#111;">Join our WhatsApp Group</p>
+      <p style="margin:0 0 16px;font-size:12px;color:#666;line-height:1.5;">Connect with attendees, get event updates and stay in the loop.</p>
+      <a href="https://chat.whatsapp.com/DUDnFrjo24lBzlXzhUiJiH?mode=gi_t" style="display:inline-block;background:#25D366;color:#fff;text-decoration:none;font-size:10px;letter-spacing:.2em;text-transform:uppercase;padding:12px 20px;font-weight:700;">Join Now &rarr;</a>
+    </div>
+  </div>
+  <div class="cta"><a class="btn" href="https://tedxorileiganmu.xyz">View Event Info &rarr;</a></div>
 </div>
 <div class="foot">
+  <table role="presentation" cellspacing="0" cellpadding="0" border="0" style="margin-bottom:18px;"><tr>
+    <td style="padding-right:10px;"><a href="https://instagram.com/tedxorileiganmu" style="display:inline-block;background:#333333;border-radius:8px;text-decoration:none;line-height:0;padding:9px;" title="Instagram"><img src="https://tedxorileiganmu.xyz/icon-instagram.svg" width="18" height="18" alt="Instagram" style="display:block;border:0;"/></a></td>
+    <td style="padding-right:10px;"><a href="https://tedxorileiganmu.xyz" style="display:inline-block;background:#333333;border-radius:8px;text-decoration:none;line-height:0;padding:9px;" title="Website"><img src="https://tedxorileiganmu.xyz/icon-website.svg" width="18" height="18" alt="Website" style="display:block;border:0;"/></a></td>
+    <td><a href="https://chat.whatsapp.com/DUDnFrjo24lBzlXzhUiJiH?mode=gi_t" style="display:inline-block;background:#25D366;border-radius:8px;text-decoration:none;line-height:0;padding:9px;" title="WhatsApp Group"><img src="https://tedxorileiganmu.xyz/icon-whatsapp.svg" width="18" height="18" alt="WhatsApp" style="display:block;border:0;"/></a></td>
+  </tr></table>
   <p>Keep your reference number safe &mdash; you may be asked at the door. No re-entry without event badge. Doors open 8:30&nbsp;AM.<br/><br/>TEDxOrileIganmu &middot; The Stable by Union Bank &middot; Surulere, Lagos &middot; 6&nbsp;March&nbsp;2027<br/>Independently operated under license from TED.</p>
 </div>
 </div>
 </body>
 </html>`;
 
-    const from = process.env.RESEND_FROM_EMAIL ?? "TEDxOrileIganmu <noreply@tedxorileiganmu.com>";
+    const from = process.env.RESEND_FROM_EMAIL ?? "TEDxOrileIganmu <noreply@tedxorileiganmu.xyz>";
     try {
       const res = await fetch("https://api.resend.com/emails", {
         method: "POST",
@@ -168,6 +183,7 @@ h1{font-size:34px;font-weight:700;color:#111;letter-spacing:-.02em;margin-bottom
           to: [data.to],
           subject: `Your TEDxOrileIganmu ticket · ${data.reference}`,
           html,
+          reply_to: "tedxorileiganmu@gmail.com",
         }),
       });
       if (!res.ok) return { sent: false, reason: await res.text() };
@@ -213,9 +229,9 @@ export const sendAdminMessage = createServerFn({ method: "POST" })
   <!-- Header -->
   <div style="background:#111111;border-top:4px solid #E62B1E;">
     <div style="padding:36px 44px 40px;">
-      <!-- Wordmark -->
+      <!-- Logo -->
       <div style="margin-bottom:40px;">
-        <span style="background:#E62B1E;color:#fff;font-size:14px;font-weight:900;letter-spacing:.08em;padding:6px 10px;display:inline;">TED</span><span style="background:#111;color:#E62B1E;border:1px solid #E62B1E;font-size:14px;font-weight:900;padding:6px 10px;display:inline;">x</span><span style="margin-left:14px;color:rgba(255,255,255,.4);font-size:10px;letter-spacing:.3em;text-transform:uppercase;vertical-align:middle;">OrileIganmu</span>
+        <img src="https://tedxorileiganmu.xyz/logo-white.png" alt="TEDxOrileIganmu" width="160" style="display:block;height:auto;" />
       </div>
       <!-- Hero -->
       <p style="margin:0 0 8px;color:rgba(255,255,255,.3);font-size:10px;letter-spacing:.3em;text-transform:uppercase;">Message from the curator</p>
@@ -264,6 +280,17 @@ export const sendAdminMessage = createServerFn({ method: "POST" })
       </div>
     </div>
 
+    <!-- WhatsApp CTA -->
+    <div style="border:1px solid #e8e8e8;margin-top:40px;overflow:hidden;">
+      <div style="height:3px;background:#25D366;"></div>
+      <div style="padding:24px 28px;">
+        <p style="margin:0 0 4px;font-size:10px;letter-spacing:.25em;text-transform:uppercase;color:#aaa;">Volunteer Group</p>
+        <p style="margin:0 0 6px;font-size:18px;font-weight:700;color:#111;letter-spacing:-.01em;">Join our WhatsApp Group</p>
+        <p style="margin:0 0 20px;font-size:13px;color:#666;line-height:1.5;">Stay in the loop — get event updates, behind-the-scenes news, and connect with fellow attendees.</p>
+        <a href="https://chat.whatsapp.com/DUDnFrjo24lBzlXzhUiJiH?mode=gi_t" style="display:inline-block;background:#25D366;color:#fff;text-decoration:none;font-size:11px;letter-spacing:.2em;text-transform:uppercase;padding:14px 24px;font-weight:700;">Join Now &rarr;</a>
+      </div>
+    </div>
+
     <!-- Signature -->
     <div style="margin-top:40px;padding-top:28px;border-top:1px solid #f0f0f0;">
       <p style="margin:0 0 4px;font-size:14px;font-weight:600;color:#111;">Ekanem Michael</p>
@@ -273,6 +300,11 @@ export const sendAdminMessage = createServerFn({ method: "POST" })
 
   <!-- Footer -->
   <div style="background:#111111;padding:28px 44px;">
+    <table role="presentation" cellspacing="0" cellpadding="0" border="0" style="margin-bottom:20px;"><tr>
+      <td style="padding-right:10px;"><a href="https://instagram.com/tedxorileiganmu" style="display:inline-block;background:#333333;border-radius:8px;text-decoration:none;line-height:0;padding:9px;" title="Instagram"><img src="https://tedxorileiganmu.xyz/icon-instagram.svg" width="18" height="18" alt="Instagram" style="display:block;border:0;"/></a></td>
+      <td style="padding-right:10px;"><a href="https://tedxorileiganmu.xyz" style="display:inline-block;background:#333333;border-radius:8px;text-decoration:none;line-height:0;padding:9px;" title="Website"><img src="https://tedxorileiganmu.xyz/icon-website.svg" width="18" height="18" alt="Website" style="display:block;border:0;"/></a></td>
+      <td><a href="https://chat.whatsapp.com/DUDnFrjo24lBzlXzhUiJiH?mode=gi_t" style="display:inline-block;background:#25D366;border-radius:8px;text-decoration:none;line-height:0;padding:9px;" title="WhatsApp Group"><img src="https://tedxorileiganmu.xyz/icon-whatsapp.svg" width="18" height="18" alt="WhatsApp" style="display:block;border:0;"/></a></td>
+    </tr></table>
     <p style="margin:0 0 10px;color:rgba(255,255,255,.25);font-size:11px;line-height:1.8;">
       TEDxOrileIganmu &middot; The Stable by Union Bank, Surulere, Lagos &middot; 6&nbsp;March&nbsp;2027<br/>
       This event is independently organised under a license from TED.
@@ -286,12 +318,18 @@ export const sendAdminMessage = createServerFn({ method: "POST" })
 </body>
 </html>`;
 
-    const from = process.env.RESEND_FROM_EMAIL ?? "TEDxOrileIganmu <noreply@tedxorileiganmu.com>";
+    const from = process.env.RESEND_FROM_EMAIL ?? "TEDxOrileIganmu <noreply@tedxorileiganmu.xyz>";
     try {
       const res = await fetch("https://api.resend.com/emails", {
         method: "POST",
         headers: { Authorization: `Bearer ${apiKey}`, "Content-Type": "application/json" },
-        body: JSON.stringify({ from, to: [data.to], subject: data.subject, html }),
+        body: JSON.stringify({
+          from,
+          to: [data.to],
+          subject: data.subject,
+          html,
+          reply_to: "tedxorileiganmu@gmail.com",
+        }),
       });
       if (!res.ok) return { sent: false, reason: await res.text() };
     } catch {

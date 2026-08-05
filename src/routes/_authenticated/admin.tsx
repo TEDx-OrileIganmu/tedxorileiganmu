@@ -708,6 +708,12 @@ function TicketsTab() {
     refresh();
   };
 
+  const deleteRow = async (id: string, name: string) => {
+    if (!confirm(`Delete ticket for "${name}"? This cannot be undone.`)) return;
+    await supabase.from("ticket_orders").delete().eq("id", id);
+    refresh();
+  };
+
   const handleExport = useCallback(() => {
     if (!rows) return;
     exportCSV(
@@ -825,6 +831,13 @@ function TicketsTab() {
                         >
                           <svg width="10" height="10" viewBox="0 0 10 10" fill="none"><rect x="1" y="2" width="8" height="6" rx="0.5" stroke="currentColor" strokeWidth="1.1"/><path d="M1.5 2.5l3.5 3 3.5-3" stroke="currentColor" strokeWidth="1.1" strokeLinecap="round" strokeLinejoin="round"/></svg>
                           Message
+                        </button>
+                        <button
+                          onClick={() => deleteRow(r.id, r.full_name)}
+                          className="flex items-center gap-1.5 border border-border px-2.5 py-1.5 text-[9px] uppercase tracking-[0.2em] hover:border-red hover:text-red transition-colors whitespace-nowrap"
+                        >
+                          <svg width="10" height="10" viewBox="0 0 10 10" fill="none"><path d="M2 3h6M4 3V2h2v1M4.5 5v2.5M5.5 5v2.5M2.5 3l.5 5h4l.5-5" stroke="currentColor" strokeWidth="1.1" strokeLinecap="round" strokeLinejoin="round"/></svg>
+                          Delete
                         </button>
                       </div>
                       {r.payment_status !== "paid" && (

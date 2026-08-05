@@ -28,7 +28,7 @@ function createSupabaseFetch(supabaseKey: string): typeof fetch {
     return fetch(input, { ...init, headers });
   };
 }
-
+ 
 function createSupabaseAdminClient() {
   const SUPABASE_URL = process.env.SUPABASE_URL;
   const SUPABASE_SERVICE_ROLE_KEY = process.env.SUPABASE_SERVICE_ROLE_KEY;
@@ -42,7 +42,6 @@ function createSupabaseAdminClient() {
     console.error(`[Supabase] ${message}`);
     throw new Error(message);
   }
-
   return createClient<Database>(SUPABASE_URL, SUPABASE_SERVICE_ROLE_KEY, {
     global: {
       fetch: createSupabaseFetch(SUPABASE_SERVICE_ROLE_KEY),
