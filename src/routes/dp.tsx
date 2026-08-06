@@ -227,12 +227,26 @@ function DpPage() {
 
     // ── TEXT BLOCK (SQUARE) ───────────────────────────────────────────────────
     if (shape === "square") {
-      const TX   = CM + 4;
-      const maxW = SIZE - CM * 2 - 8;
-      let ty = 782;
+      const TX    = CM + 4;
+      const maxW  = SIZE - CM * 2 - 8;
+      const label = nameCaps || "YOUR NAME";
+      let ty = 762;
 
       ctx.textAlign    = "left";
       ctx.textBaseline = "alphabetic";
+
+      // Name — BIG (always shown)
+      const ns = fitFont(ctx, label, maxW, 90, 32, s => `800 ${s}px 'Inter Tight', system-ui, sans-serif`);
+      setLS(ctx, -1.5);
+      ctx.fillStyle = nameCaps ? "#F0F0F0" : "rgba(240,240,240,0.22)";
+      ctx.fillText(label, TX, ty + ns * 0.78);
+      ty += ns * 0.78 + ns * 0.24 + 14;
+      setLS(ctx, 0);
+
+      // Accent rule
+      ctx.fillStyle = accent;
+      ctx.fillRect(TX, ty, 56, 1.5);
+      ty += 20;
 
       // "IS ATTENDING"
       ctx.fillStyle = "#E62B1E";
@@ -240,25 +254,10 @@ function DpPage() {
       setLS(ctx, 4.5);
       ctx.fillText("IS ATTENDING", TX, ty);
       setLS(ctx, 0);
-      ty += 22;
-
-      // Accent rule
-      ctx.fillStyle = accent;
-      ctx.fillRect(TX, ty, 56, 1.5);
-      ty += 26;
-
-      // Name — BIG
-      if (nameCaps) {
-        const ns = fitFont(ctx, nameCaps, maxW, 90, 32, s => `800 ${s}px 'Inter Tight', system-ui, sans-serif`);
-        setLS(ctx, -1.5);
-        ctx.fillStyle = "#F0F0F0";
-        ctx.fillText(nameCaps, TX, ty + ns * 0.78);
-        ty += ns * 0.78 + ns * 0.24 + 16;
-        setLS(ctx, 0);
-      }
+      ty += 28;
 
       // TEDxOrileIganmu
-      const ts = nameCaps ? 62 : 78;
+      const ts = 62;
       ctx.font = `italic 400 ${ts}px 'Cormorant Garamond', Georgia, serif`;
       ctx.fillStyle = "#F0F0F0";
       setLS(ctx, 0);
@@ -284,13 +283,23 @@ function DpPage() {
     } else {
       ctx.textAlign    = "center";
       ctx.textBaseline = "alphabetic";
-      const CX2  = SIZE / 2;
-      let ty     = CIRCLE_CY + halfDiam + 38;
+      const CX2   = SIZE / 2;
+      const label = nameCaps || "YOUR NAME";
+      let ty      = CIRCLE_CY + halfDiam + 38;
 
       // Separator line
       ctx.fillStyle = "rgba(240,240,240,0.1)";
       ctx.fillRect(CM + 24, ty, SIZE - (CM + 24) * 2, 1);
-      ty += 30;
+      ty += 26;
+
+      // Name — always shown
+      const cMaxW = CIRCLE_DIAM * 0.88;
+      const ns = fitFont(ctx, label, cMaxW, 52, 22, s => `800 ${s}px 'Inter Tight', system-ui, sans-serif`);
+      setLS(ctx, -0.8);
+      ctx.fillStyle = nameCaps ? "#F0F0F0" : "rgba(240,240,240,0.22)";
+      ctx.fillText(label, CX2, ty + ns * 0.78);
+      ty += ns * 0.78 + ns * 0.24 + 10;
+      setLS(ctx, 0);
 
       // "IS ATTENDING"
       ctx.fillStyle = "#E62B1E";
@@ -298,21 +307,10 @@ function DpPage() {
       setLS(ctx, 4.5);
       ctx.fillText("IS ATTENDING", CX2, ty);
       setLS(ctx, 0);
-      ty += 30;
-
-      // Name
-      if (nameCaps) {
-        const cMaxW = CIRCLE_DIAM * 0.88;
-        const ns = fitFont(ctx, nameCaps, cMaxW, 52, 22, s => `800 ${s}px 'Inter Tight', system-ui, sans-serif`);
-        setLS(ctx, -0.8);
-        ctx.fillStyle = "#F0F0F0";
-        ctx.fillText(nameCaps, CX2, ty + ns * 0.78);
-        ty += ns * 0.78 + ns * 0.24 + 12;
-        setLS(ctx, 0);
-      }
+      ty += 26;
 
       // TEDxOrileIganmu
-      const ts = nameCaps ? 60 : 72;
+      const ts = 60;
       ctx.font = `italic 400 ${ts}px 'Cormorant Garamond', Georgia, serif`;
       ctx.fillStyle = "#F0F0F0";
       ctx.fillText("TEDxOrileIganmu", CX2, ty + ts * 0.78);
@@ -469,7 +467,7 @@ function DpPage() {
                   {/* Name input */}
                   <div>
                     <label htmlFor="dp-name" className="block text-[9px] uppercase tracking-[0.25em] text-white/30 mb-2.5">
-                      Your name <span className="text-white/15 normal-case tracking-normal">(optional)</span>
+                      Your name <span className="text-red/70 normal-case tracking-normal text-[9px]">*</span>
                     </label>
                     <input
                       id="dp-name"
@@ -478,6 +476,7 @@ function DpPage() {
                       onChange={e => setName(e.target.value)}
                       maxLength={36}
                       placeholder="e.g. Ada Eze"
+                      required
                       className="w-full bg-transparent border-b border-white/18 py-2.5 text-sm text-white placeholder-white/22 focus:outline-none focus:border-red transition-colors"
                     />
                   </div>
