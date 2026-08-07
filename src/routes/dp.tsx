@@ -268,7 +268,7 @@ function DpPage() {
       ctx.fillStyle = "rgba(240,240,240,0.36)";
       ctx.font = "500 13px 'Inter Tight', system-ui, sans-serif";
       setLS(ctx, 3);
-      ctx.fillText("BEYOND BOUNDARIES · 6 MARCH 2027 · SURULERE, LAGOS", TX, ty);
+      ctx.fillText("BEYOND BOUNDARIES · 6 MARCH 2027 · RITA LORI, SURULERE", TX, ty);
       ty += 24;
       setLS(ctx, 0);
 

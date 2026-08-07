@@ -585,8 +585,8 @@ body{background:#1a1a1a;min-height:100vh;display:flex;flex-direction:column;alig
     <div><p class="attendee-label">Attendee</p><p class="attendee-name">${r.full_name}</p></div>
     <div class="info-row">
       <div><p class="info-label">Date</p><p class="info-val">6 March 2027</p></div>
-      <div><p class="info-label">Venue</p><p class="info-val">The Stable by Union Bank</p></div>
-      <div><p class="info-label">Location</p><p class="info-val">Surulere, Lagos</p></div>
+      <div><p class="info-label">Venue</p><p class="info-val">Rita Lori Event Centre</p></div>
+      <div><p class="info-label">Location</p><p class="info-val">1 Taoridi St, Surulere, Lagos 101211</p></div>
       <div><p class="info-label">Theme</p><p class="info-val theme-val">Beyond Boundaries</p></div>
     </div>
   </div>

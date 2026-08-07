@@ -28,7 +28,7 @@ export function SiteLayout({ children }: { children: ReactNode }) {
         >
           {Array.from({ length: 2 }).map((_, k) => (
             <div key={k} className="flex shrink-0 gap-10 pr-10 items-center">
-              {["6 March 2027", "The Stable · Surulere", "Beyond Boundaries", "100 Seats Only", "TED Licensed", "Orile Iganmu · Lagos"].map((s, i) => (
+              {["6 March 2027", "Rita Lori Event Centre · Surulere", "Beyond Boundaries", "100 Seats Only", "TED Licensed", "Orile Iganmu · Lagos"].map((s, i) => (
                 <span key={`${k}-${i}`} className="flex items-center gap-10">
                   <span className="opacity-50">◆</span>{s}
                 </span>
@@ -134,7 +134,7 @@ export function SiteLayout({ children }: { children: ReactNode }) {
               </motion.div>
             </div>
             <div className="px-8 pb-10">
-              <p className="text-[9px] uppercase tracking-[0.3em] text-white/20">6 March 2027 · The Stable · Surulere, Lagos</p>
+              <p className="text-[9px] uppercase tracking-[0.3em] text-white/20">6 March 2027 · Rita Lori Event Centre · Surulere, Lagos</p>
             </div>
           </motion.div>
         )}
@@ -247,8 +247,8 @@ function SiteFooter() {
             <ul className="space-y-2.5 text-[11px] text-white/60">
               <li>6 March 2027</li>
               <li>8:30 AM · Full day</li>
-              <li>The Stable by Union Bank</li>
-              <li>Surulere, Lagos</li>
+              <li>Rita Lori Event Centre</li>
+              <li>1 Taoridi St, Surulere, Lagos 101211</li>
               <li className="pt-1">100 seats only</li>
             </ul>
           </div>

@@ -322,7 +322,7 @@ function HeroSection() {
         className="mx-auto max-w-7xl w-full px-6 md:px-10 pb-10 md:pb-12"
       >
         <p className="text-[10px] uppercase tracking-[0.15em] md:tracking-[0.25em] text-white/25 leading-relaxed">
-          6 March 2027 · The Stable by Union Bank · Surulere, Lagos
+          6 March 2027 · Rita Lori Event Centre · Surulere, Lagos
         </p>
       </motion.div>
     </section>

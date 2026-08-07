@@ -259,7 +259,7 @@ function TicketSuccessPage({ data, reference }: { data: TicketData; reference: s
               { label: "Seats", value: `${data.quantity} seat${data.quantity > 1 ? "s" : ""}` },
               { label: "Paid", value: `₦${data.amount.toLocaleString()}` },
               { label: "Date", value: "Saturday, 6 March 2027" },
-              { label: "Venue", value: "The Stable by Union Bank, Surulere" },
+              { label: "Venue", value: "Rita Lori Event Centre, Surulere" },
             ].map((r) => (
               <div key={r.label} className="flex items-baseline justify-between px-6 py-3.5">
                 <span className="text-[10px] uppercase tracking-[0.2em] text-muted-foreground">{r.label}</span>
@@ -277,14 +277,14 @@ function TicketSuccessPage({ data, reference }: { data: TicketData; reference: s
 
         {/* Directions link */}
         <a
-          href="https://www.google.com/maps/dir/?api=1&destination=The+Stable+by+Union+Bank+Surulere+Lagos+Nigeria"
+          href="https://www.google.com/maps/dir/?api=1&destination=Rita+Lori+Event+Centre,+1+Taoridi+St,+Surulere,+Lagos+101211,+Nigeria"
           target="_blank"
           rel="noreferrer"
           className="flex items-center justify-between border border-border px-5 py-4 hover:border-ink transition-colors group mb-8"
         >
           <div>
             <p className="text-[9px] uppercase tracking-[0.25em] text-muted-foreground mb-1">Venue</p>
-            <p className="text-sm font-medium text-ink">The Stable by Union Bank · Surulere, Lagos</p>
+            <p className="text-sm font-medium text-ink">Rita Lori Event Centre · 1 Taoridi St, Surulere, Lagos</p>
           </div>
           <span className="text-muted-foreground group-hover:text-red group-hover:translate-x-1 transition-all duration-300 text-sm">→</span>
         </a>
@@ -438,8 +438,8 @@ body{
     </div>
     <div class="info-row">
       <div><p class="info-label">Date</p><p class="info-val">6 March 2027</p></div>
-      <div><p class="info-label">Venue</p><p class="info-val">The Stable by Union Bank</p></div>
-      <div><p class="info-label">Location</p><p class="info-val">Surulere, Lagos</p></div>
+      <div><p class="info-label">Venue</p><p class="info-val">Rita Lori Event Centre</p></div>
+      <div><p class="info-label">Location</p><p class="info-val">1 Taoridi St, Surulere, Lagos 101211</p></div>
       <div><p class="info-label">Theme</p><p class="info-val theme-val">Beyond Boundaries</p></div>
     </div>
   </div>

@@ -82,7 +82,7 @@ export const Route = createRootRouteWithContext<{ queryClient: QueryClient }>()(
       { charSet: "utf-8" },
       { name: "viewport", content: "width=device-width, initial-scale=1" },
       { title: "TEDxOrileIganmu · From Orile, to the World." },
-      { name: "description", content: "An independently TED-licensed event. 6 March 2027, The Stable by Union Bank, Surulere, Lagos. One hundred seats." },
+      { name: "description", content: "An independently TED-licensed event. 6 March 2027, Rita Lori Event Centre, Surulere, Lagos. One hundred seats." },
       { name: "author", content: "TEDxOrileIganmu" },
       { property: "og:title", content: "TEDxOrileIganmu · From Orile, to the World." },
       { property: "og:description", content: "6 March 2027 · Surulere, Lagos. One day. One hundred seats. Nigerian ideas, on their own terms." },

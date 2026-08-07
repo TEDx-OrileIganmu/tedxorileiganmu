@@ -146,7 +146,7 @@ h1{font-size:34px;font-weight:700;color:#111;letter-spacing:-.02em;margin-bottom
     <div class="row"><span class="lbl">Seats</span><span class="val">${data.quantity} seat${data.quantity > 1 ? "s" : ""}</span></div>
     <div class="row"><span class="lbl">Amount Paid</span><span class="val">&#8358;${data.amount.toLocaleString()}</span></div>
     <div class="row"><span class="lbl">Date</span><span class="val">6 March 2027</span></div>
-    <div class="row"><span class="lbl">Venue</span><span class="val">The Stable by Union Bank, Surulere, Lagos</span></div>
+    <div class="row"><span class="lbl">Venue</span><span class="val">Rita Lori Event Centre, 1 Taoridi St, Surulere, Lagos 101211</span></div>
     <div class="theme-row"><span class="theme-bar"></span><span class="theme-txt">Beyond Boundaries &middot; Ideas that transcend place, perspective, and possibility.</span></div>
   </div>
   <!-- WhatsApp CTA -->
@@ -167,7 +167,7 @@ h1{font-size:34px;font-weight:700;color:#111;letter-spacing:-.02em;margin-bottom
     <td style="padding-right:10px;"><a href="https://tedxorileiganmu.xyz" style="display:inline-block;background:#333333;border-radius:8px;text-decoration:none;line-height:0;padding:9px;" title="Website"><img src="https://tedxorileiganmu.xyz/icon-website.svg" width="18" height="18" alt="Website" style="display:block;border:0;"/></a></td>
     <td><a href="https://chat.whatsapp.com/DUDnFrjo24lBzlXzhUiJiH?mode=gi_t" style="display:inline-block;background:#25D366;border-radius:8px;text-decoration:none;line-height:0;padding:9px;" title="WhatsApp Group"><img src="https://tedxorileiganmu.xyz/icon-whatsapp.svg" width="18" height="18" alt="WhatsApp" style="display:block;border:0;"/></a></td>
   </tr></table>
-  <p>Keep your reference number safe &mdash; you may be asked at the door. No re-entry without event badge. Doors open 8:30&nbsp;AM.<br/><br/>TEDxOrileIganmu &middot; The Stable by Union Bank &middot; Surulere, Lagos &middot; 6&nbsp;March&nbsp;2027<br/>Independently operated under license from TED.</p>
+  <p>Keep your reference number safe &mdash; you may be asked at the door. No re-entry without event badge. Doors open 8:30&nbsp;AM.<br/><br/>TEDxOrileIganmu &middot; Rita Lori Event Centre &middot; 1 Taoridi St, Surulere, Lagos 101211 &middot; 6&nbsp;March&nbsp;2027<br/>Independently operated under license from TED.</p>
 </div>
 </div>
 </body>
@@ -272,8 +272,8 @@ export const sendAdminMessage = createServerFn({ method: "POST" })
             </td>
             <td style="padding:0 32px 0 0;vertical-align:top;white-space:nowrap;">
               <p style="margin:0 0 4px;font-size:9px;letter-spacing:.2em;text-transform:uppercase;color:#bbb;">Venue</p>
-              <p style="margin:0;font-size:15px;font-weight:700;color:#111;letter-spacing:-.01em;">The Stable by Union Bank</p>
-              <p style="margin:2px 0 0;font-size:11px;color:#888;">Surulere, Lagos · Nigeria</p>
+              <p style="margin:0;font-size:15px;font-weight:700;color:#111;letter-spacing:-.01em;">Rita Lori Event Centre</p>
+              <p style="margin:2px 0 0;font-size:11px;color:#888;">1 Taoridi St, Surulere, Lagos 101211</p>
             </td>
           </tr>
         </table>
@@ -306,7 +306,7 @@ export const sendAdminMessage = createServerFn({ method: "POST" })
       <td><a href="https://chat.whatsapp.com/DUDnFrjo24lBzlXzhUiJiH?mode=gi_t" style="display:inline-block;background:#25D366;border-radius:8px;text-decoration:none;line-height:0;padding:9px;" title="WhatsApp Group"><img src="https://tedxorileiganmu.xyz/icon-whatsapp.svg" width="18" height="18" alt="WhatsApp" style="display:block;border:0;"/></a></td>
     </tr></table>
     <p style="margin:0 0 10px;color:rgba(255,255,255,.25);font-size:11px;line-height:1.8;">
-      TEDxOrileIganmu &middot; The Stable by Union Bank, Surulere, Lagos &middot; 6&nbsp;March&nbsp;2027<br/>
+      TEDxOrileIganmu &middot; Rita Lori Event Centre, 1 Taoridi St, Surulere, Lagos 101211 &middot; 6&nbsp;March&nbsp;2027<br/>
       This event is independently organised under a license from TED.
     </p>
     <p style="margin:0;font-size:11px;color:rgba(255,255,255,.15);">

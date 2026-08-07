@@ -50,7 +50,7 @@ function AboutPage() {
               <span className="text-ink font-normal">Ekanem Michael</span>.
             </p>
             <p>
-              Coming 6 March 2027 to The Stable by Union Bank, Surulere. One day. One hundred seats. Ideas that refuse to be polite.
+              Coming 6 March 2027 to Rita Lori Event Centre, Surulere. One day. One hundred seats. Ideas that refuse to be polite.
             </p>
           </motion.div>
         </div>
@@ -82,13 +82,13 @@ function AboutPage() {
           >
             <div className="absolute top-0 left-0 right-0 h-[3px] bg-red" />
             <p className="text-[10px] uppercase tracking-[0.25em] text-muted-foreground mb-6">Venue</p>
-            <h3 className="font-display text-3xl md:text-4xl tracking-[-0.02em] font-medium leading-tight">The Stable</h3>
-            <p className="font-serif italic text-lg text-ink/50 mt-1">by Union Bank</p>
+            <h3 className="font-display text-3xl md:text-4xl tracking-[-0.02em] font-medium leading-tight">Rita Lori Event Centre</h3>
+            <p className="font-serif italic text-lg text-ink/50 mt-1">1 Taoridi St, Surulere</p>
             <div className="mt-6 space-y-1.5 text-[11px] text-muted-foreground">
-              <p>Surulere · Lagos · Nigeria</p>
+              <p>Lagos 101211 · Nigeria</p>
             </div>
             <a
-              href="https://www.google.com/maps/dir/?api=1&destination=The+Stable+by+Union+Bank+Surulere+Lagos+Nigeria"
+              href="https://www.google.com/maps/dir/?api=1&destination=Rita+Lori+Event+Centre,+1+Taoridi+St,+Surulere,+Lagos+101211,+Nigeria"
               target="_blank" rel="noreferrer"
               className="mt-6 inline-flex items-center gap-2 text-[10px] uppercase tracking-[0.2em] text-ink border-b border-red pb-px hover:text-red transition-colors"
             >
@@ -122,24 +122,24 @@ function AboutPage() {
           className="relative overflow-hidden"
         >
           <iframe
-            src="https://maps.google.com/maps?q=The+Stable+by+Union+Bank,+Surulere,+Lagos,+Nigeria&output=embed"
+            src="https://maps.google.com/maps?q=Rita+Lori+Event+Centre,+1+Taoridi+St,+Surulere,+Lagos+101211,+Nigeria&output=embed"
             width="100%"
             height="400"
             style={{ border: 0, display: "block" }}
             allowFullScreen
             loading="lazy"
             referrerPolicy="no-referrer-when-downgrade"
-            title="The Stable by Union Bank, Surulere, Lagos"
+            title="Rita Lori Event Centre, 1 Taoridi St, Surulere, Lagos"
           />
           {/* Overlay bar */}
           <div className="absolute bottom-0 left-0 right-0 bg-ink/95 backdrop-blur-sm px-6 md:px-10 py-5 flex flex-col sm:flex-row sm:items-center justify-between gap-4">
             <div>
               <p className="text-[9px] uppercase tracking-[0.3em] text-white/35 mb-1.5">Event Venue</p>
-              <p className="font-display text-white text-xl md:text-2xl tracking-[-0.01em] font-medium">The Stable by Union Bank</p>
-              <p className="text-white/50 text-sm mt-0.5">Surulere, Lagos · Nigeria · 6 March 2027</p>
+              <p className="font-display text-white text-xl md:text-2xl tracking-[-0.01em] font-medium">Rita Lori Event Centre</p>
+              <p className="text-white/50 text-sm mt-0.5">1 Taoridi St, Surulere, Lagos 101211 · 6 March 2027</p>
             </div>
             <a
-              href="https://www.google.com/maps/dir/?api=1&destination=The+Stable+by+Union+Bank+Surulere+Lagos+Nigeria"
+              href="https://www.google.com/maps/dir/?api=1&destination=Rita+Lori+Event+Centre,+1+Taoridi+St,+Surulere,+Lagos+101211,+Nigeria"
               target="_blank" rel="noreferrer"
               className="shrink-0 inline-flex items-center gap-2 border border-red text-red px-6 py-3 text-[10px] uppercase tracking-[0.25em] hover:bg-red hover:text-white transition-colors"
             >

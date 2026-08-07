@@ -7,7 +7,7 @@ export const Route = createFileRoute("/")({
   head: () => ({
     meta: [
       { title: "TEDxOrileIganmu · Beyond Boundaries" },
-      { name: "description", content: "Beyond Boundaries · An independently TED-licensed event. 6 March 2027, The Stable by Union Bank, Surulere, Lagos. One hundred seats." },
+      { name: "description", content: "Beyond Boundaries · An independently TED-licensed event. 6 March 2027, Rita Lori Event Centre, 1 Taoridi St, Surulere, Lagos 101211. One hundred seats." },
       { property: "og:title", content: "TEDxOrileIganmu · Beyond Boundaries" },
       { property: "og:description", content: "6 March 2027 · Surulere, Lagos. Ideas that transcend place, perspective, and possibility." },
     ],
@@ -132,7 +132,7 @@ function EventScene() {
       <div className="grid grid-cols-2 md:grid-cols-4 gap-5 md:gap-8">
         {[
           { label: "Date",     value: "6 March 2027" },
-          { label: "Venue",    value: "The Stable, Surulere" },
+          { label: "Venue",    value: "Rita Lori Event Centre, Surulere" },
           { label: "Capacity", value: "100 seats only" },
           { label: "Theme",    value: "Beyond Boundaries" },
         ].map(({ label, value }, i) => (
@@ -417,11 +417,11 @@ function HomePage() {
                   <span className="text-[9px] uppercase tracking-[0.25em] text-muted-foreground">Venue</span>
                   <span className="h-px w-4 bg-border shrink-0" />
                   <a
-                    href="https://www.google.com/maps/dir/?api=1&destination=The+Stable+by+Union+Bank+Surulere+Lagos+Nigeria"
+                    href="https://www.google.com/maps/dir/?api=1&destination=Rita+Lori+Event+Centre,+1+Taoridi+St,+Surulere,+Lagos+101211,+Nigeria"
                     target="_blank" rel="noreferrer"
                     className="font-serif italic text-lg text-ink/60 hover:text-red transition-colors"
                   >
-                    The Stable by Union Bank, Surulere →
+                    Rita Lori Event Centre, Surulere →
                   </a>
                 </div>
                 <p className="text-[10px] uppercase tracking-[0.2em] text-ink/30 font-serif italic">
