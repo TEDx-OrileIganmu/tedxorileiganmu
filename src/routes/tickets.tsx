@@ -123,28 +123,6 @@ function TicketsPage() {
         </p>
       </section>
 
-      {/* Merch teaser */}
-      <section className="bg-ink text-white border-t border-white/8">
-        <div className="mx-auto max-w-7xl px-6 md:px-10 py-14 md:py-18 flex flex-col md:flex-row md:items-center justify-between gap-8">
-          <div>
-            <p className="text-[9px] uppercase tracking-[0.3em] text-red mb-3">Coming Soon</p>
-            <h3 className="font-display text-2xl md:text-3xl tracking-[-0.02em] font-medium text-white">
-              Official <span className="font-serif italic font-normal">event merch.</span>
-            </h3>
-            <p className="mt-3 text-[12px] text-white/40 leading-relaxed max-w-sm">
-              Limited-run tees, tote bags, and lanyards. Available at the venue and online before the event. Follow us so you don't miss the drop.
-            </p>
-          </div>
-          <a
-            href="https://instagram.com/tedxorileiganmu"
-            target="_blank"
-            rel="noreferrer"
-            className="shrink-0 inline-flex items-center gap-2 border border-white/20 text-white px-8 py-4 text-[9px] uppercase tracking-[0.25em] hover:border-white/60 transition-colors"
-          >
-            Follow @tedxorileiganmu →
-          </a>
-        </div>
-      </section>
 
       {selected && <TicketDialog tier={selected} onClose={() => setSelected(null)} />}
     </SiteLayout>
