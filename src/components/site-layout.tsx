@@ -10,8 +10,9 @@ const NAV = [
   { to: "/speakers", label: "Speakers", n: "03" },
   { to: "/tickets", label: "Tickets", n: "04" },
   { to: "/volunteer", label: "Volunteer", n: "05" },
-  { to: "/support", label: "Support", n: "06" },
-  { to: "/dp", label: "Get a DP", n: "07" },
+  { to: "/sponsors", label: "Sponsor", n: "06" },
+  { to: "/support", label: "Support", n: "07" },
+  { to: "/dp", label: "Get a DP", n: "08" },
 ] as const;
 
 export function SiteLayout({ children }: { children: ReactNode }) {

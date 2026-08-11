@@ -28,7 +28,6 @@ function createSupabaseFetch(supabaseKey: string): typeof fetch {
     return fetch(input, { ...init, headers });
   };
 }
- 
 function createSupabaseAdminClient() {
   const SUPABASE_URL = process.env.SUPABASE_URL;
   const SUPABASE_SERVICE_ROLE_KEY = process.env.SUPABASE_SERVICE_ROLE_KEY;
