@@ -16,6 +16,7 @@ function AuthPage() {
   const [password, setPassword] = useState("");
   const [error, setError] = useState<string | null>(null);
   const [loading, setLoading] = useState(false);
+  const [showPassword, setShowPassword] = useState(false);
 
   useEffect(() => {
     supabase.auth.getSession().then(({ data: { session } }) => {
@@ -87,12 +88,33 @@ function AuthPage() {
             </label>
             <label className="block">
               <span className="block text-[10px] uppercase tracking-[0.3em] text-muted-foreground mb-2">Password</span>
-              <input
-                type="password" required minLength={6} value={password}
-                onChange={(e) => setPassword(e.target.value)}
-                className="w-full bg-transparent border-b border-ink/25 py-3 focus:outline-none focus:border-red text-lg"
-                placeholder="••••••••"
-              />
+              <div className="relative">
+                <input
+                  type={showPassword ? "text" : "password"} required minLength={6} value={password}
+                  onChange={(e) => setPassword(e.target.value)}
+                  className="w-full bg-transparent border-b border-ink/25 py-3 pr-10 focus:outline-none focus:border-red text-lg"
+                  placeholder="••••••••"
+                />
+                <button
+                  type="button"
+                  onClick={() => setShowPassword((v) => !v)}
+                  className="absolute right-0 top-1/2 -translate-y-1/2 p-2 text-muted-foreground hover:text-ink transition-colors"
+                  aria-label={showPassword ? "Hide password" : "Show password"}
+                >
+                  {showPassword ? (
+                    <svg width="18" height="18" viewBox="0 0 18 18" fill="none" stroke="currentColor" strokeWidth="1.4" strokeLinecap="round" strokeLinejoin="round">
+                      <path d="M1 9s3-5.5 8-5.5S17 9 17 9s-3 5.5-8 5.5S1 9 1 9Z"/>
+                      <circle cx="9" cy="9" r="2.5"/>
+                      <line x1="2" y1="2" x2="16" y2="16"/>
+                    </svg>
+                  ) : (
+                    <svg width="18" height="18" viewBox="0 0 18 18" fill="none" stroke="currentColor" strokeWidth="1.4" strokeLinecap="round" strokeLinejoin="round">
+                      <path d="M1 9s3-5.5 8-5.5S17 9 17 9s-3 5.5-8 5.5S1 9 1 9Z"/>
+                      <circle cx="9" cy="9" r="2.5"/>
+                    </svg>
+                  )}
+                </button>
+              </div>
             </label>
             {error && <p className="text-sm text-red">{error}</p>}
             <button
